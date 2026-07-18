@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
         // ② 续播 seek 完成前的 0 秒上报不会抹掉已存进度（与 watch 页前端防御同源）。
         // 历史页与首页「继续观看」不同步的主因就是这批 0 秒行。
         // 守卫在登录检查之后：未登录仍一律 401，语义不变。
-        if (typeof position === "number" && position < 1) {
+        // Number() 强转再判：字符串 "0" 也会被拦（Codex 会诊抓的类型绕过漏洞）；
+        // NaN/负数同样落入 <1 拦截，异常上报不再污染库。
+        const posNum = Number(position);
+        if (!Number.isFinite(posNum) || posNum < 1) {
             return NextResponse.json({ success: true, skipped: true });
         }
         const ids = getIdsByPath(db, filePath);
