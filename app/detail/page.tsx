@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { BiliComments } from "../../components/BiliComments";
 
 // 外链图统一走同源代理(TMDB 直链在部分网络/Chrome 下偶发加载失败,首页同款铁律)
 const proxyImg = (u?: string | null) => (u && /^https?:\/\//.test(u) ? `/api/discover/img?u=${encodeURIComponent(u)}` : u || "");
@@ -330,6 +331,9 @@ function DetailContent() {
                     )}
                 </section>
             )}
+
+            {/* B站讨论区："活人感"来源——按片名搜B站最相关视频,拉真实热评(搜不到就整块收起) */}
+            {data?.title && <BiliComments title={data.title} />}
 
             {/* 重新刮削弹窗：列出 TMDB 候选供人工选择正确条目 */}
             {rescrapeOpen && (

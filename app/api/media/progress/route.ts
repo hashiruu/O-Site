@@ -54,6 +54,15 @@ export async function POST(request: NextRequest) {
         const db = getDb();
         const user = await resolveUserKeyOrNull(request);
         if (!user) return NextResponse.json({ success: false, error: "LOGIN_REQUIRED" }, { status: 401 }); // 未登录不落任何进度
+
+        // 还没真正播放（<1s）的写入一律忽略：
+        // ① 打开页面瞬间不产生"0% 足迹"噪讯行污染观看历史；
+        // ② 续播 seek 完成前的 0 秒上报不会抹掉已存进度（与 watch 页前端防御同源）。
+        // 历史页与首页「继续观看」不同步的主因就是这批 0 秒行。
+        // 守卫在登录检查之后：未登录仍一律 401，语义不变。
+        if (typeof position === "number" && position < 1) {
+            return NextResponse.json({ success: true, skipped: true });
+        }
         const ids = getIdsByPath(db, filePath);
         if (!ids) return NextResponse.json({ success: false, error: 'Media not found in library' });
 

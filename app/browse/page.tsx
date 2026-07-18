@@ -98,10 +98,10 @@ function BrowseContent() {
 
     return (
         <div className="w-full h-full text-text-1">
-            <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 py-6">
+            <div className="w-full">
 
                 {/* 顶部导航与路径 */}
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-4">
                     {parent && (
                         <button
                             onClick={() => router.push(`/browse?path=${encodeURIComponent(parent)}`)}
@@ -111,14 +111,11 @@ function BrowseContent() {
                             <BackIcon />
                         </button>
                     )}
-                    <div>
-                        <h1 className="font-display text-[30px] leading-tight tracking-tight text-text-1 sm:text-[38px]">
-                            文件浏览
-                        </h1>
-                        <p className="text-[13px] text-text-3 mt-1 truncate max-w-2xl">
-                            当前位置: {currentPath === "/" ? "根目录 (全部磁盘)" : currentPath}
-                        </p>
-                    </div>
+                    <PageHeader
+                        title="文件浏览"
+                        description={`当前位置: ${currentPath === "/" ? "根目录 (全部磁盘)" : currentPath}`}
+                        className="min-w-0 flex-1"
+                    />
                 </div>
 
                 {/* 错误提示 */}
