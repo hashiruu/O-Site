@@ -78,6 +78,7 @@ function LibraryHero({ current, stats }: {
     current: { book: BookItem; category: string; percent: number } | null;
     stats: { reading: number; finished: number; total: number };
 }) {
+    const { t } = useLang();
     const cover = current ? `/api/books/cover?path=${encodeURIComponent(current.book.path)}` : null;
     return (
         <div className="relative mb-7 overflow-hidden rounded-3xl border border-line bg-bg-card">
@@ -94,8 +95,8 @@ function LibraryHero({ current, stats }: {
             <div className="relative flex flex-wrap items-center gap-x-10 gap-y-5 px-6 py-6 sm:px-9 sm:py-8">
                 {/* 左：标题 + 统计 */}
                 <div className="min-w-[240px] flex-1">
-                    <h1 className="font-display text-[30px] leading-tight tracking-tight text-text-1 sm:text-[38px]">书架</h1>
-                    <p className="mt-2 text-[13px] text-text-3">epub / pdf / markdown 全站内阅读 · AI 陪读</p>
+                    <h1 className="font-display text-[30px] leading-tight tracking-tight text-text-1 sm:text-[38px]">{t('书架')}</h1>
+                    <p className="mt-2 text-[13px] text-text-3">{t('epub / pdf / markdown 全站内阅读 · AI 陪读')}</p>
                     <div className="mt-5 flex items-end gap-8">
                         {[
                             { n: stats.reading, label: "在读" },
@@ -104,7 +105,7 @@ function LibraryHero({ current, stats }: {
                         ].map((s) => (
                             <div key={s.label}>
                                 <div className="font-display text-[26px] leading-none tabular-nums text-text-1">{s.n}</div>
-                                <div className="mt-1.5 text-[11px] tracking-[0.2em] text-text-3">{s.label}</div>
+                                <div className="mt-1.5 text-[11px] tracking-[0.2em] text-text-3">{t(s.label)}</div>
                             </div>
                         ))}
                     </div>
@@ -121,12 +122,12 @@ function LibraryHero({ current, stats }: {
                                 style={{ transform: "rotateY(-8deg)" }} />
                         </div>
                         <div className="max-w-[220px]">
-                            <div className="text-[11px] font-semibold tracking-[0.18em] text-primary">继续阅读</div>
+                            <div className="text-[11px] font-semibold tracking-[0.18em] text-primary">{t('继续阅读')}</div>
                             <div className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-snug text-text-1">{current.book.title}</div>
                             <div className="mt-3 flex items-center gap-3">
                                 <RingProgress percent={current.percent} size={44} />
                                 <span className="rounded-full bg-primary px-4 py-1.5 text-[12px] font-medium text-white transition-transform group-hover:scale-105">
-                                    翻开 →
+                                    {t('翻开 →')}
                                 </span>
                             </div>
                         </div>
@@ -247,6 +248,7 @@ function BookCard({ book, category, percent }: { book: BookItem; category: strin
 function CollapsibleSection({ id, title, subtitle, children, headerSize = 22, forceOpen = false }: {
     id: string; title: string; subtitle: string; children: React.ReactNode; headerSize?: number; forceOpen?: boolean;
 }) {
+    const { t } = useLang();
     const [open, setOpen] = useState(true);
     useEffect(() => {
         try { if (localStorage.getItem(`bookshelf-fold:${id}`) === "0") setOpen(false); } catch { /* noop */ }
@@ -295,6 +297,7 @@ const CAPTION_H = 74;
 const CELL_H = COVER_H + BOARD_H + CAPTION_H;
 
 function ShelfGrid({ books, category, progress }: { books: BookItem[]; category: string; progress?: Map<string, number> }) {
+    const { t } = useLang();
     const shelfBg = `repeating-linear-gradient(180deg,
         transparent 0px, transparent ${COVER_H - 1}px,
         var(--color-line) ${COVER_H - 1}px, var(--color-bg-card) ${COVER_H}px,
@@ -345,10 +348,10 @@ function ShelfGrid({ books, category, progress }: { books: BookItem[]; category:
                             <svg className="mb-2 h-7 w-7 text-text-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                            <span className="text-[12px]">暂无藏书</span>
+                            <span className="text-[12px]">{t('暂无藏书')}</span>
                         </div>
                     </div>
-                    <div className="mt-[20px] text-center text-[11px] text-text-4">去后台导入</div>
+                    <div className="mt-[20px] text-center text-[11px] text-text-4">{t('去后台导入')}</div>
                 </div>
             ) : (
                 books.map((b, i) => (
@@ -446,11 +449,12 @@ function PaperCard({ paper, group, percent }: { paper: BookItem; group?: string;
 }
 
 function PaperSection(props: { groups: Record<string, BookItem[]>; progress?: Map<string, number>; forceOpen?: boolean }) {
+    const { t } = useLang();
     const entries = Object.entries(props.groups);
     return (
         <section id="sec-papers" className="mt-10 scroll-mt-20 border-t border-line pt-8">
             <div className="mb-4 flex items-baseline gap-3 px-1">
-                <h2 className="text-[26px] font-bold tracking-tight text-text-1">论文</h2>
+                <h2 className="text-[26px] font-bold tracking-tight text-text-1">{t('论文')}</h2>
                 <span className="text-[14px] font-medium text-text-3">
                     PAPERS 收藏 · 按研究方向目录归类
                 </span>
@@ -502,9 +506,9 @@ export default function BookshelfPage() {
                     // 未登录/无 book 权限：清掉缓存（防上一个账号的书单残留给游客看），给明确指引
                     shelfCache.books = null;
                     setData(null);
-                    setError("没有书架访问权限——请先登录（或找站长开通图书权限）。");
+                    setError(t('没有书架访问权限——请先登录（或找站长开通图书权限）。'));
                 } else if (!shelfCache.books) {
-                    setError("书架加载失败，请稍后重试。");
+                    setError(t('书架加载失败，请稍后重试。'));
                 }
             });
         fetch("/api/reader-progress")
@@ -589,8 +593,8 @@ export default function BookshelfPage() {
                 />
             ) : (
                 <div className="mb-8 px-1">
-                    <h1 className="font-display text-[30px] leading-tight tracking-tight text-text-1 sm:text-[38px]">书架</h1>
-                    <p className="mt-1 text-[14px] text-text-3">epub / pdf / markdown 全站内阅读 · AI 陪读</p>
+                    <h1 className="font-display text-[30px] leading-tight tracking-tight text-text-1 sm:text-[38px]">{t('书架')}</h1>
+                    <p className="mt-1 text-[14px] text-text-3">{t('epub / pdf / markdown 全站内阅读 · AI 陪读')}</p>
                 </div>
             )}
 
@@ -631,11 +635,11 @@ export default function BookshelfPage() {
                             <input
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="搜书名 / 文件名…"
+                                placeholder={t('搜书名 / 文件名…')}
                                 className="h-9 w-56 rounded-full border border-line bg-bg-input pl-9 pr-8 text-[13px] text-text-1 outline-none transition-colors placeholder:text-text-3 focus:border-primary sm:w-64"
                             />
                             {query && (
-                                <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-3 hover:text-text-1" aria-label="清空">✕</button>
+                                <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-3 hover:text-text-1" aria-label={t('清空')}>✕</button>
                             )}
                         </div>
                         {q ? (
@@ -688,14 +692,14 @@ export default function BookshelfPage() {
                                                 ) : (
                                                     <div className="flex h-full w-full items-center justify-center p-2 text-center text-[12px] text-text-3">{b.title}</div>
                                                 )}
-                                                <div className="absolute top-1 right-1 rounded-full border border-brand-cyan/70 bg-black/65 px-1.5 py-[2px] text-[9px] font-bold leading-none text-brand-cyan backdrop-blur-[2px]">外站</div>
+                                                <div className="absolute top-1 right-1 rounded-full border border-brand-cyan/70 bg-black/65 px-1.5 py-[2px] text-[9px] font-bold leading-none text-brand-cyan backdrop-blur-[2px]">{t('外站')}</div>
                                             </div>
                                             <div className="mt-1.5 line-clamp-2 text-[12.5px] font-medium leading-snug text-text-1 transition-colors group-hover/eb:text-primary">{b.title}</div>
                                             {b.rating ? <div className="text-[11px] text-text-3">★ {Number(b.rating).toFixed(1)}</div> : null}
                                         </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); void removeExtBook(b.id); }}
-                                            aria-label="移除"
+                                            aria-label={t('移除')}
                                             className="absolute left-1 top-1 z-10 hidden h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-black/60 text-[12px] text-white/85 hover:bg-black/80 group-hover/eb:flex"
                                         >×</button>
                                     </div>
@@ -706,7 +710,7 @@ export default function BookshelfPage() {
 
                     {/* 正在阅读：Reading Now 信息大卡（封面 + 圆环进度 + 继续阅读），横滑（搜索时收起） */}
                     {!q && reading.length > 0 && (
-                        <CollapsibleSection id="reading-now" title="正在阅读" subtitle={`${reading.length} 本`}>
+                        <CollapsibleSection id="reading-now" title={t('正在阅读')} subtitle={`${reading.length} ${t('本')}`}>
                             <div className="ios-scroll flex gap-4 overflow-x-auto pb-3 pt-3 scrollbar-hide">
                                 {reading.map(({ book, category, percent }) => {
                                     const canCover = book.ext === "epub" || book.ext === "pdf";
@@ -729,7 +733,7 @@ export default function BookshelfPage() {
                                                 <div className="mt-1 text-[11px] text-text-3">{category}</div>
                                                 <div className="mt-auto flex items-center justify-between">
                                                     <RingProgress percent={percent} size={40} />
-                                                    <span className="text-[12px] font-medium text-primary opacity-80 transition-opacity group-hover:opacity-100">继续阅读 →</span>
+                                                    <span className="text-[12px] font-medium text-primary opacity-80 transition-opacity group-hover:opacity-100">{t('继续阅读 →')}</span>
                                                 </div>
                                             </div>
                                         </a>
@@ -740,14 +744,14 @@ export default function BookshelfPage() {
                     )}
                     {/* 已读完：读到 98% 以上的书（搜索时收起） */}
                     {!q && finished.length > 0 && (
-                        <CollapsibleSection id="finished" title="已读完" subtitle={`${finished.length} 本`}>
+                        <CollapsibleSection id="finished" title={t('已读完')} subtitle={`${finished.length} ${t('本')}`}>
                             <div className="flex gap-6 overflow-x-auto pb-3 pt-3 scrollbar-hide">
                                 {finished.map(({ book, category }) => (
                                     <div key={book.path} className="flex shrink-0 flex-col items-center">
                                         <BookCard book={book} category={category} percent={100} />
                                         <span className="mt-1 flex items-center gap-1 text-[11px] text-primary">
                                             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                            已读完
+                                            {t('已读完')}
                                         </span>
                                     </div>
                                 ))}
@@ -755,7 +759,7 @@ export default function BookshelfPage() {
                         </CollapsibleSection>
                     )}
                     {shownBase.map(([name, books]) => (
-                        <CollapsibleSection key={name} id={`base-${name}`} title={name} subtitle={`${books.length} 本`} forceOpen={!!q}>
+                        <CollapsibleSection key={name} id={`base-${name}`} title={t(name)} subtitle={`${books.length} ${t('本')}`} forceOpen={!!q}>
                             <div className="pt-3">
                                 <ShelfGrid books={books} category={name} progress={progressMap} />
                             </div>

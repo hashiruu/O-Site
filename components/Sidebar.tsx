@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
+import { useLang } from "@/lib/i18n";
 
 function SidebarIcon({ path }: { path: string }) {
     return (
@@ -77,6 +78,7 @@ const NavItemMobile = ({ href, label, iconKey, pathname }: { href: string, label
 };
 
 export function Sidebar() {
+    const { t } = useLang();
     const pathname = usePathname();
     const [categories, setCategories] = useState<{ type: string; name: string }[]>([]);
 
@@ -103,36 +105,36 @@ export function Sidebar() {
         <Fragment>
             <aside className="hidden md:flex flex-col w-[200px] lg:w-[220px] shrink-0 h-[calc(100vh-64px)] sticky top-16 overflow-y-auto z-40 custom-scrollbar pr-3">
                 <div className="py-8 flex flex-col gap-1.5">
-                    <NavItemDesktop href="/" label="首页探索" iconKey="home" pathname={pathname} />
+                    <NavItemDesktop href="/" label={t('首页探索')} iconKey="home" pathname={pathname} />
                     <div className="my-5 mx-4 h-px bg-gradient-to-r from-line/50 via-line to-transparent" />
                     <div className="px-6 mb-3 section-index text-[13px] uppercase tracking-[0.3em]">Channels</div>
                     {categories.map(cat => (
-                        <NavItemDesktop key={cat.type} href={`/category/${cat.type}`} label={cat.name} iconKey={getIconKey(cat.type)} pathname={pathname} />
+                        <NavItemDesktop key={cat.type} href={`/category/${cat.type}`} label={t(cat.name)} iconKey={getIconKey(cat.type)} pathname={pathname} />
                     ))}
-                    <NavItemDesktop href="/sports" label="体育" iconKey="trophy" pathname={pathname} />
+                    <NavItemDesktop href="/sports" label={t('体育')} iconKey="trophy" pathname={pathname} />
                     <NavItemDesktop href="/live" label="Live TV" iconKey="tv" pathname={pathname} />
                     <div className="my-5 mx-4 h-px bg-gradient-to-r from-line/50 via-line to-transparent" />
                     <div className="px-6 mb-3 section-index text-[13px] uppercase tracking-[0.3em]">Collection</div>
-                    <NavItemDesktop href="/favorites" label="我的收藏" iconKey="star" pathname={pathname} />
-                    <NavItemDesktop href="/playlists" label="播放列表" iconKey="playlist" pathname={pathname} />
-                    <NavItemDesktop href="/browse" label="文件巡航" iconKey="default" pathname={pathname} />
-                    <NavItemDesktop href="/category/private" label="私密保险箱" iconKey="private" pathname={pathname} />
+                    <NavItemDesktop href="/favorites" label={t('我的收藏')} iconKey="star" pathname={pathname} />
+                    <NavItemDesktop href="/playlists" label={t('播放列表')} iconKey="playlist" pathname={pathname} />
+                    <NavItemDesktop href="/browse" label={t('文件巡航')} iconKey="default" pathname={pathname} />
+                    <NavItemDesktop href="/category/private" label={t('私密保险箱')} iconKey="private" pathname={pathname} />
                     <div className="mt-auto pt-8 flex flex-col gap-1.5 border-t border-line/20">
-                        <NavItemDesktop href="/admin" label="媒体库后台" iconKey="settings" pathname={pathname} />
-                        <NavItemDesktop href="/settings" label="系统偏好设置" iconKey="settings" pathname={pathname} />
+                        <NavItemDesktop href="/admin" label={t('媒体库后台')} iconKey="settings" pathname={pathname} />
+                        <NavItemDesktop href="/settings" label={t('系统偏好设置')} iconKey="settings" pathname={pathname} />
                     </div>
                 </div>
             </aside>
             <nav className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-bg-nav/80 backdrop-blur-2xl border-t border-line/30 flex items-center justify-around z-50 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
-                <NavItemMobile href="/" label="首页" iconKey="home" pathname={pathname} />
+                <NavItemMobile href="/" label={t('首页')} iconKey="home" pathname={pathname} />
                 <NavItemMobile
                     href={categories.length > 0 ? `/category/${categories[0].type}` : "/category/series"}
-                    label="分类"
+                    label={t('分类')}
                     iconKey={categories.length > 0 ? getIconKey(categories[0].type) : "series"}
                     pathname={pathname}
                 />
-                <NavItemMobile href="/browse" label="文件" iconKey="playlist" pathname={pathname} />
-                <NavItemMobile href="/admin" label="管理" iconKey="settings" pathname={pathname} />
+                <NavItemMobile href="/browse" label={t('文件')} iconKey="playlist" pathname={pathname} />
+                <NavItemMobile href="/admin" label={t('管理')} iconKey="settings" pathname={pathname} />
             </nav>
         </Fragment>
     );
