@@ -8,6 +8,7 @@ import { useMe } from "@/components/useMe";
 import type Hls from "hls.js";
 import { DanmakuControl } from "@/components/watch/DanmakuControl";
 import { DanmakuTrack, type DanmakuHandle, type DanmakuSettings } from "@/components/live/DanmakuTrack";
+import { SourceDrawer } from "../../components/SourceDrawer";
 
 // ---- 浏览器解码能力探测：决定 direct（直连）/ remux（视频复制+音频转AAC）/ hls（完整转码）----
 function canBrowserPlayVideo(codec: string, pixFmt: string): boolean {
@@ -256,6 +257,20 @@ function WatchContent() {
     const [moveError, setMoveError] = useState('');
 
     const fileName = filePath ? filePath.split(/[/\\]/).pop() || "未知视频" : "未知视频";
+
+    // 未收录/播不了 → 右侧"视频源"抽屉（fetch-out 平台 + B站站内嵌入）
+    const [sourceDrawer, setSourceDrawer] = useState(false);
+    useEffect(() => {
+        if (!filePath) return;
+        // 目录路径（无扩展名）= 没有可播文件,立即弹;文件路径给 5s 探测,视频元数据仍没就绪才弹
+        const looksLikeDir = !/\.[a-zA-Z0-9]{2,5}$/.test(filePath);
+        const t = setTimeout(() => {
+            const v = document.querySelector("video");
+            const noMedia = !v || !v.duration || Number.isNaN(v.duration);
+            if (looksLikeDir || noMedia) setSourceDrawer(true);
+        }, looksLikeDir ? 600 : 5000);
+        return () => clearTimeout(t);
+    }, [filePath]);
 
     useEffect(() => {
         if (!filePath) return;
@@ -2071,6 +2086,12 @@ function WatchContent() {
                     )}
                 </div>
             </div>
+            <SourceDrawer
+                title={fileName.replace(/\.[a-zA-Z0-9]{2,5}$/, "")}
+                kind="series"
+                open={sourceDrawer}
+                onClose={() => setSourceDrawer(false)}
+            />
         </div >
     );
 }
