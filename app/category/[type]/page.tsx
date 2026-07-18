@@ -6,6 +6,7 @@ import { FetchOutMenu } from "../../../components/FetchOutMenu";
 import { RandomAddQuiz } from "../../../components/RandomAddQuiz";
 import { useMe } from "../../../components/useMe";
 import { PageHeader } from "../../../components/PageHeader";
+import { useLang } from "../../../lib/i18n";
 
 function PlayIcon() { return <svg className="w-[12px] h-[12px]" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>; }
 
@@ -20,6 +21,7 @@ const typeLabels: Record<string, string> = {
 export default function CategoryPage({ params }: { params: Promise<{ type: string }> }) {
     const router = useRouter();
     const { type } = use(params);
+    const { t } = useLang();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     // Fetch out：外站条目（第三态）+ 随机添加问卷 + 跳转菜单
@@ -197,11 +199,11 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
             {foItem && <FetchOutMenu title={foItem.title} overview={foItem.overview} anchor={{ x: foItem.x, y: foItem.y }} kind={type} onClose={() => setFoItem(null)} />}
             <div className="w-full">
                 <PageHeader
-                    title={title}
-                    description={`${items.length} 部收录${extItems.length > 0 ? ` · ${extItems.length} 部外站` : ""}`}
+                    title={t(title)}
+                    description={`${items.length} ${t("部收录")}${extItems.length > 0 ? ` · ${extItems.length} ${t("部外站")}` : ""}`}
                     actions={
                     <div className="flex items-center gap-2 text-[13px]">
-                        <span className="text-text-3 mr-1">排序:</span>
+                        <span className="text-text-3 mr-1">{t("排序:")}</span>
                         <div className="flex bg-bg-input rounded-lg p-1 border border-line">
                             {(["date", "name", "ext"] as const).map(option => (
                                 <button
@@ -209,7 +211,7 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                                     onClick={() => setSortBy(option)}
                                     className={`px-3 py-1.5 rounded-md transition-colors ${sortBy === option ? "bg-bg-tag text-text-1 font-medium shadow-sm" : "text-text-3 hover:text-text-2"}`}
                                 >
-                                    {option === "date" ? "时间" : option === "name" ? "名称" : "类型"}
+                                    {option === "date" ? t("时间") : option === "name" ? t("名称") : t("类型")}
                                 </button>
                             ))}
                         </div>
@@ -249,7 +251,7 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                             >
                                 <div className="relative flex aspect-[2/3] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-bg-input/50 transition-all duration-250 group-hover:-translate-y-1 group-hover:border-primary/60">
                                     <svg className="h-9 w-9 fill-text-3 transition-colors group-hover:fill-primary" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                                    <span className="text-[13px] font-medium text-text-3 transition-colors group-hover:text-primary">随机添加</span>
+                                    <span className="text-[13px] font-medium text-text-3 transition-colors group-hover:text-primary">{t("随机添加")}</span>
                                     <span className="px-4 text-center text-[11px] leading-relaxed text-text-4">按你的口味补 10 部<br />本站没有就跳外站看</span>
                                 </div>
                             </button>
@@ -315,7 +317,7 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                                         <div className="flex h-full w-full items-center justify-center p-3 text-center text-[13px] text-text-3">{item.title}</div>
                                     )}
                                     <div className="absolute top-1.5 right-1.5 rounded-full bg-black/65 backdrop-blur-[2px] border border-brand-cyan/70 text-brand-cyan text-[10px] font-bold px-2.5 py-[3px] leading-none whitespace-nowrap z-20" title="外部站点资源，点击选择平台观看">
-                                        外站
+                                        {t("外站")}
                                     </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); void removeExternal(item.id); }}

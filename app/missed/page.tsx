@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMe } from "@/components/useMe";
 import { LoginGate } from "@/components/LoginGate";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "@/lib/i18n";
 
 type Kind = "movie" | "tv" | "book" | "game";
 type Status = "none" | "unseen" | "partial" | "done";
@@ -282,6 +283,7 @@ function SkeletonGrid() {
 }
 
 export default function MissedPage() {
+    const { t } = useLang();
     const me = useMe();
     const [items, setItems] = useState<MissedItem[]>([]);
     const [sources, setSources] = useState<SourceResult[] | null>(null);
@@ -370,7 +372,7 @@ export default function MissedPage() {
             {/* ── 页头 ── */}
             <PageHeader
                 title="What You Missed"
-                description="热点补课清单 · 标记你看过了没"
+                description={t("热点补课清单 · 标记你看过了没")}
                 actions={
                     <>
                         <button

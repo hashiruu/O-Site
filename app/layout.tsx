@@ -4,6 +4,7 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { MobileTabBar } from "../components/MobileTabBar";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { LangProvider } from "../lib/i18n";
 import { PageTitle } from "../components/PageTitle";
 import { CommandPalette } from "../components/CommandPalette";
 import { BackToTop } from "../components/BackToTop";
@@ -60,6 +61,7 @@ export default function RootLayout({
             </head>
             <body className="antialiased bg-bg text-text-1">
                 <ThemeProvider>
+                <LangProvider>
                     <PageTitle />
                     <CommandPalette />
                     {/* B 站布局：顶栏 + safe-area 避让 + 主内容 + 移动底部 tab
@@ -77,6 +79,7 @@ export default function RootLayout({
                     <BackToTop />
                     <Footer />
                     <MobileTabBar />
+                </LangProvider>
                 </ThemeProvider>
             </body>
         </html>

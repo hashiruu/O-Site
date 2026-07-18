@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMe } from "@/components/useMe";
 import { LoginGate } from "@/components/LoginGate";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "@/lib/i18n";
 
 // 提取与首页完全一致的媒体卡片接口
 interface MediaItem {
@@ -18,6 +19,7 @@ interface MediaItem {
 function PlayIcon() { return <svg className="w-[12px] h-[12px]" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>; }
 
 export default function FavoritesPage() {
+    const { t } = useLang();
     const router = useRouter();
     const me = useMe();
     const [favorites, setFavorites] = useState<{ path: string, title: string, addedAt?: string }[]>([]);
@@ -71,7 +73,7 @@ export default function FavoritesPage() {
     return (
         <div className="w-full text-text-1 pb-20">
             <PageHeader
-                title="我的收藏"
+                title={t("我的收藏")}
                 description={`共 ${favorites.length} 项 · 在播放页标记的影片与剧集都会汇集于此。`}
             />
             <div className="w-full">

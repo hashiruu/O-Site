@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMe } from "../../components/useMe";
 import { LoginGate } from "../../components/LoginGate";
+import { useLang } from "../../lib/i18n";
 
 interface Note { id: string; title: string; content: string; created_at: string; updated_at: string }
 interface BookRef { bookPath: string; bookTitle: string; count: number; latest: string; preview: string }
@@ -105,6 +106,7 @@ export default function NotesPage() {
     const [preview, setPreview] = useState(false);
     const taRef = useRef<HTMLTextAreaElement>(null);
     const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const { t } = useLang();
     const draftRef = useRef(draft);
     draftRef.current = draft;
     // 预览 HTML：必须在任何条件 return 之前（hooks 顺序铁律）
@@ -264,7 +266,7 @@ export default function NotesPage() {
             {/* ── 左列：列表(备忘录侧栏) ── */}
             <div className={`flex w-full flex-col border-r border-line bg-bg-input/40 md:w-[300px] lg:w-[340px] ${mobileEditing ? "max-md:hidden" : ""}`}>
                 <div className="flex items-center justify-between gap-2 px-4 pb-2 pt-4">
-                    <h1 className="font-display text-[20px] tracking-tight">笔记</h1>
+                    <h1 className="font-display text-[20px] tracking-tight">{t("笔记")}</h1>
                     <button
                         onClick={() => void createNote()}
                         aria-label="新建笔记"
@@ -283,7 +285,7 @@ export default function NotesPage() {
                         <input
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
-                            placeholder="搜索"
+                            placeholder={t("搜索")}
                             className="h-8.5 w-full rounded-lg border border-transparent bg-bg-hover/70 pl-9 pr-3 text-[13px] outline-none transition-colors placeholder:text-text-3 focus:border-primary/40 focus:bg-bg-card"
                         />
                     </div>
@@ -293,7 +295,7 @@ export default function NotesPage() {
                     {/* 书籍笔记 ref：一本书一条,只读,跳阅读器 */}
                     {filteredRefs.length > 0 && (
                         <div className="mb-1 mt-1">
-                            <div className="px-2 pb-1 text-[11px] font-semibold tracking-wide text-text-3">书籍笔记</div>
+                            <div className="px-2 pb-1 text-[11px] font-semibold tracking-wide text-text-3">{t("书籍笔记")}</div>
                             {filteredRefs.map((b) => (
                                 <a
                                     key={b.bookPath}
@@ -305,7 +307,7 @@ export default function NotesPage() {
                                         <span className="line-clamp-1 text-[13.5px] font-semibold">{b.bookTitle}</span>
                                     </div>
                                     <div className="mt-0.5 flex items-baseline gap-2 pl-5">
-                                        <span className="shrink-0 text-[11px] text-text-3">{b.count} 条标注</span>
+                                        <span className="shrink-0 text-[11px] text-text-3">{b.count} {t("条标注")}</span>
                                         {b.preview && <span className="line-clamp-1 text-[12px] text-text-3">{b.preview}</span>}
                                     </div>
                                 </a>
@@ -317,7 +319,7 @@ export default function NotesPage() {
                     {/* 我的笔记：时间分组 */}
                     {groups.map((g) => (
                         <div key={g.label} className="mb-1">
-                            <div className="px-2 pb-1 pt-2 text-[11px] font-semibold tracking-wide text-text-3">{g.label}</div>
+                            <div className="px-2 pb-1 pt-2 text-[11px] font-semibold tracking-wide text-text-3">{t(g.label)}</div>
                             {g.items.map((n) => (
                                 <div key={n.id} className="group/note relative">
                                     <button
@@ -326,10 +328,10 @@ export default function NotesPage() {
                                             curId === n.id ? "bg-primary/12" : "hover:bg-bg-hover"
                                         }`}
                                     >
-                                        <div className="line-clamp-1 pr-6 text-[13.5px] font-semibold">{n.title || "新笔记"}</div>
+                                        <div className="line-clamp-1 pr-6 text-[13.5px] font-semibold">{n.title || t("新笔记")}</div>
                                         <div className="mt-0.5 flex items-baseline gap-2">
                                             <span className="shrink-0 text-[11px] text-text-3">{relTime(n.updated_at)}</span>
-                                            <span className="line-clamp-1 text-[12px] text-text-3">{n.content.replace(/\n+/g, " ").trim() || "无附加文字"}</span>
+                                            <span className="line-clamp-1 text-[12px] text-text-3">{n.content.replace(/\n+/g, " ").trim() || t("无附加文字")}</span>
                                         </div>
                                     </button>
                                     <button
@@ -345,7 +347,7 @@ export default function NotesPage() {
                     ))}
                     {filtered.length === 0 && filteredRefs.length === 0 && (
                         <p className="px-2 py-10 text-center text-[12.5px] text-text-3">
-                            {ql ? `没有找到「${q.trim()}」` : "还没有笔记，点右上角 + 写一条"}
+                            {ql ? `没有找到「${q.trim()}」` : t("还没有笔记，点右上角 + 写一条")}
                         </p>
                     )}
                 </div>
@@ -361,7 +363,7 @@ export default function NotesPage() {
                                 className="flex shrink-0 cursor-pointer items-center gap-1 pr-1 text-[13px] text-primary md:hidden"
                             >
                                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                                笔记
+                                {t("笔记")}
                             </button>
                             {/* Markdown 工具栏 */}
                             <div className="scrollbar-hide flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">
@@ -394,10 +396,10 @@ export default function NotesPage() {
                                     onClick={() => { flushSave(); setPreview((v) => !v); }}
                                     className={`h-7 cursor-pointer rounded-md px-2.5 text-[12px] transition-colors ${preview ? "bg-primary/12 font-semibold text-primary" : "text-text-2 hover:bg-bg-hover hover:text-text-1"}`}
                                 >
-                                    {preview ? "编辑" : "预览"}
+                                    {preview ? t("编辑") : t("预览")}
                                 </button>
                                 <span className="text-[11px] text-text-3">
-                                    {saving === "saving" ? "保存中…" : saving === "saved" ? "已保存" : relTime(cur.updated_at)}
+                                    {saving === "saving" ? t("保存中…") : saving === "saved" ? t("已保存") : relTime(cur.updated_at)}
                                 </span>
                             </div>
                         </div>
@@ -423,7 +425,7 @@ export default function NotesPage() {
                         <svg className="h-12 w-12 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5l4 4L9 19l-5 1 1-5L16.5 3.5z" />
                         </svg>
-                        <p className="text-[13.5px]">选一条笔记，或点 + 新建</p>
+                        <p className="text-[13.5px]">{t("选一条笔记，或点 + 新建")}</p>
                     </div>
                 )}
             </div>

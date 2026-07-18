@@ -5,6 +5,7 @@
 // 「搜索」：输关键词 → TMDB/豆瓣/音乐剧清单出候选 → 点选确认单条入库（带海报与简介预览）。
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useLang } from "../lib/i18n";
 
 interface Question { key: string; title: string; options: { value: string; label: string; desc?: string }[] }
 
@@ -67,6 +68,7 @@ export function RandomAddQuiz({ type, onClose, onDone }: {
     onClose: () => void;
     onDone: (added: number) => void;
 }) {
+    const { t } = useLang();
     const questions = QUIZ[type] || COMMON;
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -151,19 +153,19 @@ export function RandomAddQuiz({ type, onClose, onDone }: {
                     <div className="py-4 text-center">
                         <div className="font-display text-[34px] text-primary">+{result.added}</div>
                         <p className="mt-1.5 text-[14px] font-semibold text-text-1">
-                            {result.added > 0 ? "已添加到这个分区" : "这个口味暂时没挖到新内容"}
+                            {result.added > 0 ? t("已添加到这个分区") : t("这个口味暂时没挖到新内容")}
                         </p>
                         <p className="mt-1 text-[12px] leading-relaxed text-text-3">
                             {result.added > 0 ? "带「外站」角标的就是新成员，点开可跳转合法平台观看。" : "换个口味再试一次？"}
                         </p>
                         <button onClick={onClose} className="mt-4 w-full cursor-pointer rounded-full bg-primary py-2 text-[13px] font-semibold text-white transition-transform hover:scale-[1.02]">
-                            好的
+                            {t("好的")}
                         </button>
                     </div>
                 ) : busy ? (
                     <div className="flex flex-col items-center py-8">
                         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        <p className="mt-3 text-[13px] text-text-3">正在按你的口味挑选…</p>
+                        <p className="mt-3 text-[13px] text-text-3">{t("正在按你的口味挑选…")}</p>
                     </div>
                 ) : (
                     <>
@@ -182,7 +184,7 @@ export function RandomAddQuiz({ type, onClose, onDone }: {
 
                         {mode === "quiz" ? (
                             <>
-                                <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">随机添加 · 先聊聊口味</div>
+                                <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">{t("随机添加 · 先聊聊口味")}</div>
                                 <div className="mt-1.5 text-[16px] font-semibold text-text-1">{q.title}</div>
                                 <div className="mt-3.5 space-y-2">
                                     {q.options.map((o) => (
@@ -205,7 +207,7 @@ export function RandomAddQuiz({ type, onClose, onDone }: {
                             </>
                         ) : (
                             <>
-                                <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">关键词添加 · 搜到什么加什么</div>
+                                <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">{t("关键词添加 · 搜到什么加什么")}</div>
                                 <input
                                     autoFocus
                                     value={kw}
@@ -244,7 +246,7 @@ export function RandomAddQuiz({ type, onClose, onDone }: {
                                                             : "cursor-pointer bg-primary text-white hover:scale-105"
                                                     }`}
                                                 >
-                                                    {done ? "已添加 ✓" : "添加"}
+                                                    {done ? t("已添加 ✓") : t("添加")}
                                                 </button>
                                             </div>
                                         );

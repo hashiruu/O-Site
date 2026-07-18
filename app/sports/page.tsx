@@ -10,8 +10,10 @@ import { GroupStandings } from "../../components/sports/GroupStandings";
 import { isKnockoutPlaceholder } from "../../lib/sports/bracket";
 import type { MatchEvent } from "../../lib/sports/types";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "../../lib/i18n";
 
 export default function SportsPage() {
+    const { t } = useLang();
     const [tourOpen, setTourOpen] = useState(false);
     const [standingsOpen, setStandingsOpen] = useState(false);
     const [stream, setStream] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export default function SportsPage() {
 
     return (
         <div className="w-full text-text-1">
-            <PageHeader title="体育" eyebrow="Sports" description="世界杯赛程 · 美东时间 · 点击比赛自动匹配直播源。" />
+            <PageHeader title={t("体育")} eyebrow="Sports" description={t("世界杯赛程 · 美东时间 · 点击比赛自动匹配直播源。")} />
 
             <ScheduleDashboard onWatch={handleWatch} onReplayTour={openTour} />
 

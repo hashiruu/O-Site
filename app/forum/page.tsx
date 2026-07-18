@@ -8,6 +8,7 @@ import { useMe } from "@/components/useMe";
 import { LoginGate } from "@/components/LoginGate";
 import { VoteColumn, timeAgo } from "@/components/forum";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "@/lib/i18n";
 
 interface ForumPost {
     id: number;
@@ -29,6 +30,7 @@ const SORTS = [
 ] as const;
 
 export default function ForumPage() {
+    const { t } = useLang();
     const me = useMe();
     const [sort, setSort] = useState<(typeof SORTS)[number]["key"]>("hot");
     const [posts, setPosts] = useState<ForumPost[]>([]);
@@ -122,14 +124,14 @@ export default function ForumPage() {
         <div className="mx-auto w-full max-w-3xl pb-16">
             {/* 页头 */}
             <PageHeader
-                title="讨论组"
-                description="随便聊聊"
+                title={t("讨论组")}
+                description={t("随便聊聊")}
                 actions={
                     <button
                         className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white transition-transform duration-200 hover:scale-105"
                         onClick={() => setShowComposer((v) => !v)}
                     >
-                        {showComposer ? "收起" : "发帖"}
+                        {showComposer ? t("收起") : t("发帖")}
                     </button>
                 }
             />

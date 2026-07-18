@@ -42,11 +42,12 @@ const cache = new Map<string, { head: string; line: string }>();
 export async function GET(req: NextRequest) {
     const userKey = await resolveUserKeyOrNull(req);
     if (!userKey) return NextResponse.json({ success: true, data: null });
+    const lang = req.nextUrl.searchParams.get("lang") === "en" ? "en" : "zh";
 
     // 3 小时一个时段：同时段内问候稳定，跨时段自动更新
     const now = new Date();
     const slot = `${now.toISOString().slice(0, 10)}-${Math.floor(now.getUTCHours() / 3)}`;
-    const ck = `${userKey}|${slot}`;
+    const ck = `${userKey}|${slot}|${lang}`;
     if (cache.has(ck)) return NextResponse.json({ success: true, data: cache.get(ck) });
 
     const tk = token();
@@ -113,8 +114,12 @@ export async function GET(req: NextRequest) {
                 model: DS_MODEL,
                 max_tokens: 500,
                 thinking: { type: "disabled" },
-                system:
-                    "你以村上春树的笔触为一家小小的家庭媒体站写门厅问候。根据用户信息写中文，只输出严格 JSON：{\"head\":\"…\",\"line\":\"…\"}\n"
+                system: lang === "en"
+                    ? "You write the foyer greeting for a small family media site, in a Murakami-esque voice. Output strict JSON only: {\"head\":\"…\",\"line\":\"…\"}\n"
+                    + "head: a clean 2-3 word time-of-day greeting, choose from: Late night / Good evening / Good afternoon / Good morning. No weekday-time mashups, no clock times.\n"
+                    + "line: one 40-70 word paragraph, calm and slightly detached with a little warmth, at most one concrete everyday metaphor (a record, a well, a cat, cold beer, an ironed shirt). Weave in one or two things from their recent reading/watching records and the weather. No commands, no exclamation marks, no emoji, no quotes, at most one question mark, end with a period.\n"
+                    + "Output JSON only."
+                    : "你以村上春树的笔触为一家小小的家庭媒体站写门厅问候。根据用户信息写中文，只输出严格 JSON：{\"head\":\"…\",\"line\":\"…\"}\n"
                     + "head：恰好 3 个字、干净利落的时段招呼，只许从这些里选：夜深了、晚上好、下午好、中午好、早上好。"
                     + "禁止「还没睡呀」这类搭话式口语，禁止星期+时段硬拼（「周五凌晨好」），不要具体钟点。\n"
                     + "line：一段 50-80 字（硬上限 90 字，必须在此内完整收尾），村上春树式的语调——平静、疏离里带一点暖，"

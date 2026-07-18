@@ -10,6 +10,7 @@ import { RandomAddQuiz } from "../../../components/RandomAddQuiz";
 import { useMe } from "../../../components/useMe";
 import { LoginGate } from "../../../components/LoginGate";
 import { PageHeader } from "../../../components/PageHeader";
+import { useLang } from "../../../lib/i18n";
 
 const FALLBACK_IMG = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2YzZjQ2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48L3N2Zz4=';
 
@@ -30,6 +31,7 @@ export default function MusicalPage() {
     const [fo, setFo] = useState<{ title: string; overview?: string; x: number; y: number } | null>(null);
     const { me } = useMe();
     const isAdmin = me?.role === "boss" || me?.role === "admin";
+    const { t } = useLang();
 
     const loadMine = () => {
         fetch("/api/external?type=musical")
@@ -74,7 +76,7 @@ export default function MusicalPage() {
 
             {/* 标题栏 */}
             <PageHeader
-                title="音乐剧"
+                title={t("音乐剧")}
                 description={`${recs.length} 部今日推荐${mine.length > 0 ? ` · ${mine.length} 部收藏` : ""} · 舞台音乐剧，点卡片跳合法平台观看`}
                 actions={isAdmin ? (
                     <button
@@ -82,7 +84,7 @@ export default function MusicalPage() {
                         className="flex cursor-pointer items-center gap-1 rounded-full border border-line px-3.5 py-1.5 text-[13px] text-text-2 transition-all hover:-translate-y-px hover:border-primary/50 hover:text-primary"
                     >
                         <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                        随机添加
+                        {t("随机添加")}
                     </button>
                 ) : undefined}
             />
@@ -91,7 +93,7 @@ export default function MusicalPage() {
             {recs.length > 0 && (
                 <section className="mb-10">
                     <div className="mb-3 flex items-baseline gap-3">
-                        <h2 className="font-display text-[20px] tracking-tight text-text-1">今日推荐</h2>
+                        <h2 className="font-display text-[20px] tracking-tight text-text-1">{t("今日推荐") /* fallback zh */}</h2>
                         <span className="text-[12px] text-text-3">每天换一批 · 点卡片选平台观看</span>
                     </div>
                     <div className="ios-scroll scrollbar-hide -mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
@@ -105,7 +107,7 @@ export default function MusicalPage() {
             {/* 我的外站收藏：网格 + 随机添加卡（admin） */}
             <section>
                 <div className="mb-3 flex items-baseline gap-3">
-                    <h2 className="font-display text-[20px] tracking-tight text-text-1">我的收藏</h2>
+                    <h2 className="font-display text-[20px] tracking-tight text-text-1">{t("我的收藏")}</h2>
                     <span className="text-[12px] text-text-3">{mine.length} 部 · 点卡片选平台观看</span>
                 </div>
                 {mine.length === 0 && !isAdmin ? (

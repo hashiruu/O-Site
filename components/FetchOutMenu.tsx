@@ -8,6 +8,7 @@
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { fetchOutLinks } from "../lib/fetch-out";
+import { useLang } from "../lib/i18n";
 
 /** 八方位展开（与 EPUB 阅读器 anchorFlip 同一规则，锚点为点击坐标点） */
 function anchorFlip(x: number, y: number, gap = 10) {
@@ -39,6 +40,7 @@ export function FetchOutMenu({ title, kind, overview, anchor, onClose, extraActi
     onClose: () => void;
     extraActions?: { label: string; run: () => void }[];
 }) {
+    const { t } = useLang();
     const links = fetchOutLinks(title, kind);
     const [expand, setExpand] = useState(false);
     // 八方位位置只算一次（打开瞬间的视口与点击点）；SSR/手机不走浮窗
@@ -80,7 +82,7 @@ export function FetchOutMenu({ title, kind, overview, anchor, onClose, extraActi
                         {overview}
                     </button>
                 ) : (
-                    <p className="mt-1 text-[12px] leading-relaxed text-text-3">本站暂无此资源，可以去这些平台找找：</p>
+                    <p className="mt-1 text-[12px] leading-relaxed text-text-3">{t("本站暂无此资源，可以去这些平台找找：")}</p>
                 )}
                 <div className="mt-3.5 space-y-2">
                     {links.map((l) => (
@@ -93,7 +95,7 @@ export function FetchOutMenu({ title, kind, overview, anchor, onClose, extraActi
                         >
                             <span>{l.name}</span>
                             <span className="flex items-center gap-1.5 text-[11px] text-text-3">
-                                {l.en && <span className="rounded bg-bg-tag px-1.5 py-0.5">英文平台</span>}
+                                {l.en && <span className="rounded bg-bg-tag px-1.5 py-0.5">{t("英文平台")}</span>}
                                 <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6m4-3h6m0 0v6m0-6L10 14" />
                                 </svg>
@@ -114,7 +116,7 @@ export function FetchOutMenu({ title, kind, overview, anchor, onClose, extraActi
                     ))}
                 </div>
                 <button onClick={onClose} className="mt-4 w-full cursor-pointer rounded-full border border-line py-2 text-[13px] text-text-3 transition-colors hover:bg-bg-hover hover:text-text-1">
-                    关闭
+                    {t("关闭")}
                 </button>
             </div>
         </div>,

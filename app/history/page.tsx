@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useMe } from "@/components/useMe";
 import { LoginGate } from "@/components/LoginGate";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "@/lib/i18n";
 
 const FALLBACK_IMG = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2YzZjQ2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48L3N2Zz4=';
 
@@ -70,6 +71,7 @@ export default function HistoryPage() {
     const [hasMore, setHasMore] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [tab, setTab] = useState<"all" | "watch" | "book">("all");
+    const { t } = useLang();
 
     const load = useCallback(async (p: number, append: boolean) => {
         try {
@@ -126,18 +128,18 @@ export default function HistoryPage() {
     }
 
     const statCards = stats ? [
-        { n: stats.totalWatch, label: "看过的影音", accent: "text-primary" },
-        { n: stats.totalBooks, label: "翻过的书", accent: "text-secondary" },
-        { n: stats.weekActive, label: "本周活跃", accent: "text-text-1" },
-        { n: stats.finished, label: "已完成", accent: "text-text-1" },
-        { n: fmtHours(stats.watchSeconds), label: stats.watchSeconds >= 3600 ? "累计观看(小时)" : "累计观看(分钟)", accent: "text-text-1" },
+        { n: stats.totalWatch, label: t("看过的影音"), accent: "text-primary" },
+        { n: stats.totalBooks, label: t("翻过的书"), accent: "text-secondary" },
+        { n: stats.weekActive, label: t("本周活跃"), accent: "text-text-1" },
+        { n: stats.finished, label: t("已完成"), accent: "text-text-1" },
+        { n: fmtHours(stats.watchSeconds), label: stats.watchSeconds >= 3600 ? t("累计观看(小时)") : t("累计观看(分钟)"), accent: "text-text-1" },
     ] : [];
 
     return (
         <div className="w-full text-text-1 pb-20">
             <PageHeader
-                title="观看历史"
-                description="影音与阅读的全部足迹，与首页「继续观看」同一本账。"
+                title={t("观看历史")}
+                description={t("影音与阅读的全部足迹，与首页「继续观看」同一本账。")}
                 actions={
                     <div className="flex rounded-full border border-line bg-bg-input p-0.5 text-[12.5px]">
                         {([["all", "全部"], ["watch", "影音"], ["book", "书"]] as const).map(([k, label]) => (
@@ -170,16 +172,16 @@ export default function HistoryPage() {
             ) : entries.length === 0 ? (
                 <div className="text-center py-20 text-text-3">
                     <svg className="w-24 h-24 mx-auto mb-4 text-text-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p className="text-lg font-medium text-text-2">这里还是空的</p>
+                    <p className="text-lg font-medium text-text-2">{t("这里还是空的")}</p>
                     <p className="text-sm mt-1 opacity-60">看过的、读过的都会出现在这里</p>
-                    <Link href="/" className="inline-block mt-6 px-6 py-2 rounded-full bg-primary text-white text-sm hover:brightness-110 transition">去首页看看</Link>
+                    <Link href="/" className="inline-block mt-6 px-6 py-2 rounded-full bg-primary text-white text-sm hover:brightness-110 transition">{t("去首页看看")}</Link>
                 </div>
             ) : (
                 <div className="space-y-7">
                     {groups.map((g) => (
                         <section key={g.label}>
                             <div className="mb-3 flex items-center gap-3">
-                                <h2 className="font-display text-[17px] tracking-tight text-text-1">{g.label}</h2>
+                                <h2 className="font-display text-[17px] tracking-tight text-text-1">{t(g.label)}</h2>
                                 <span className="text-[12px] text-text-3">{g.list.length} 条</span>
                                 <div className="h-px flex-1 bg-line/70" />
                             </div>
@@ -218,18 +220,18 @@ export default function HistoryPage() {
                                                     onClick={() => router.push(`/watch?filePath=${encodeURIComponent(e.w.path)}`)}
                                                     className="cursor-pointer rounded-md bg-primary/15 px-4 py-1.5 text-[12.5px] font-medium text-primary transition-colors hover:bg-primary/25"
                                                 >
-                                                    {e.w.completed ? '重新看' : '继续看'}
+                                                    {e.w.completed ? t('重新看') : t('继续看')}
                                                 </button>
                                                 {!e.w.completed && (
                                                     <button
                                                         onClick={() => markComplete(e.w.wpId)}
                                                         className="cursor-pointer rounded-md border border-line px-3 py-1.5 text-[12px] text-text-2 transition-colors hover:text-text-1"
-                                                    >标记已看</button>
+                                                    >{t("标记已看")}</button>
                                                 )}
                                                 <button
                                                     onClick={() => remove(e.w.wpId)}
                                                     className="cursor-pointer rounded-md border border-line px-3 py-1.5 text-[12px] text-text-3 transition-colors hover:border-bili-pink/40 hover:text-bili-pink"
-                                                >移除</button>
+                                                >{t("移除")}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -264,7 +266,7 @@ export default function HistoryPage() {
                                                     onClick={() => router.push(bookHref(e.b.path))}
                                                     className="cursor-pointer rounded-md bg-secondary/12 px-4 py-1.5 text-[12.5px] font-medium text-secondary transition-colors hover:bg-secondary/20"
                                                 >
-                                                    {e.b.completed ? '重读' : '继续读'}
+                                                    {e.b.completed ? t('重读') : t('继续读')}
                                                 </button>
                                             </div>
                                         </div>
@@ -281,7 +283,7 @@ export default function HistoryPage() {
                                 disabled={loadingMore}
                                 className="cursor-pointer rounded-full border border-line px-6 py-2 text-sm text-text-2 transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-50"
                             >
-                                {loadingMore ? '加载中…' : '加载更多'}
+                                {loadingMore ? t('加载中…') : t('加载更多')}
                             </button>
                         </div>
                     )}

@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../components/ThemeProvider";
 import { PageHeader } from "../../components/PageHeader";
+import { useLang } from "@/lib/i18n";
 
 export default function SettingsPage() {
+    const { t } = useLang();
     const { theme, toggleTheme } = useTheme();
     const [tmdbKey, setTmdbKey] = useState("");
     const [hwAccel, setHwAccel] = useState(false);
@@ -62,7 +64,7 @@ export default function SettingsPage() {
     return (
         <div className="w-full h-full text-text-1 custom-scrollbar pb-20">
             <div className="w-full max-w-4xl mx-auto">
-                <PageHeader title="设置" description="管理外观、媒体抓取接口以及播放偏好配置。" />
+                <PageHeader title={t("设置")} description={t("管理外观、媒体抓取接口以及播放偏好配置。")} />
 
                 <div className="space-y-8">
                     {/* UI 外观 */}

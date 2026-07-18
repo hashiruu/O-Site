@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { PageHeader } from "../../components/PageHeader";
 import { useMe } from "../../components/useMe";
 import { LoginGate } from "../../components/LoginGate";
+import { useLang } from "../../lib/i18n";
 
 interface BiliHit { bvid: string; title: string; cover: string | null; author: string; duration: string; play: number | null; desc: string }
 interface BiliProg { bvid: string; title: string; cover: string | null; author: string; seconds: number; updated_at: string }
@@ -29,6 +30,7 @@ function EmbedContent() {
     const watchedRef = useRef(0);   // 本次会话累计观看秒数（心跳估算）
     const baseRef = useRef(0);      // 打开时的历史进度
     const debRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const { t } = useLang();
 
     const loadContinue = useCallback(() => {
         fetch("/api/bili/progress").then((r) => r.json())
@@ -96,7 +98,7 @@ function EmbedContent() {
     return (
         <div className="w-full pb-16 text-text-1">
             <PageHeader
-                title="嵌入观看"
+                title={t("嵌入观看")}
                 eyebrow="Bilibili"
                 description="不离站看B站：搜索 → 站内整页播放（可登录、可切高画质）→ 自动记录看到哪。进度为估算值。"
             />
@@ -146,7 +148,7 @@ function EmbedContent() {
             {continueList.length > 0 && (
                 <section className="mb-8">
                     <div className="mb-3 flex items-baseline gap-3">
-                        <h2 className="font-display text-[20px] tracking-tight text-text-1">继续看</h2>
+                        <h2 className="font-display text-[20px] tracking-tight text-text-1">{t("继续看")}</h2>
                         <span className="text-[12px] text-text-3">{continueList.length} 条 · 进度为观看时长估算</span>
                     </div>
                     <div className="ios-scroll scrollbar-hide -mx-1 flex gap-3.5 overflow-x-auto px-1 pb-2">
@@ -193,7 +195,7 @@ function EmbedContent() {
                     <input
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
-                        placeholder="搜B站视频：片名 / UP主 / 关键词…"
+                        placeholder={t("搜B站视频：片名 / UP主 / 关键词…")}
                         className="h-12 w-full rounded-full border border-line bg-bg-input pl-11 pr-5 text-[15px] text-text-1 outline-none transition-colors placeholder:text-text-3 focus:border-primary"
                     />
                 </div>

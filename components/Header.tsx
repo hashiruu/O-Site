@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "./ThemeProvider";
+import { useLang } from "../lib/i18n";
 import { openLoginPopup, signOutInPlace } from "./loginPopup";
 
 // 频道 tab（spec §3.2：固定 5-6 个分类，不抄 B 站十几入口）
@@ -58,6 +59,7 @@ const isChannelActive = (pathname: string, href: string) =>
 
 export function Header() {
     const { theme, toggleTheme } = useTheme();
+    const { lang, setLang, t } = useLang();
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -121,7 +123,7 @@ export function Header() {
                             prefetch={false}
                             className={`shrink-0 text-[14px] transition-colors ${isChannelActive(pathname, ch.href) ? "font-medium text-primary" : "text-text-2 hover:text-text-1"}`}
                         >
-                            {ch.label}
+                            {t(ch.label)}
                         </Link>
                     ))}
                 </nav>
@@ -147,11 +149,19 @@ export function Header() {
                         <svg className="h-[18px] w-[18px] sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                        <span className="hidden sm:inline">搜索</span>
+                        <span className="hidden sm:inline">{t("搜索")}</span>
+                    </button>
+                    {/* 中英切换：一键翻转，localStorage 记忆 */}
+                    <button
+                        onClick={() => setLang(lang === "zh" ? "en" : "zh")}
+                        title={lang === "zh" ? "Switch to English" : "切换为中文"}
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-text-2 transition-colors hover:bg-bg-hover hover:text-text-1"
+                    >
+                        {lang === "zh" ? "EN" : "中"}
                     </button>
                     <button
                         onClick={toggleTheme}
-                        title={theme === "dark" ? "切换日间模式" : "切换夜间模式"}
+                        title={theme === "dark" ? t("切换日间模式") : t("切换夜间模式")}
                         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-2 transition-colors hover:bg-bg-hover hover:text-text-1"
                     >
                         {theme === "dark" ? (
@@ -193,7 +203,7 @@ export function Header() {
                                                 )}
                                                 <div className="min-w-0">
                                                     <div className="truncate text-[13px] text-text-1">{sessionUser.name}</div>
-                                                    <button onClick={() => void signOutInPlace()} className="cursor-pointer text-[11px] text-text-3 hover:text-primary">退出登录</button>
+                                                    <button onClick={() => void signOutInPlace()} className="cursor-pointer text-[11px] text-text-3 hover:text-primary">{t("退出登录")}</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -205,7 +215,7 @@ export function Header() {
                                             <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                                             </svg>
-                                            登录
+                                            {t("登录")}
                                         </button>
                                     )}
                                     {SECONDARY.filter((item) => shouldShow(item.href, isAdmin, isBoss, scopes)).map((item) => (
@@ -219,7 +229,7 @@ export function Header() {
                                             <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d={item.icon} />
                                             </svg>
-                                            {item.label}
+                                            {t(item.label)}
                                         </Link>
                                     ))}
                                 </div>

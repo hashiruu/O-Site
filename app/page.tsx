@@ -9,6 +9,7 @@ import { FetchOutMenu } from "../components/FetchOutMenu";
 import { RandomAddQuiz } from "../components/RandomAddQuiz";
 import { useMe } from "../components/useMe";
 import { openLoginPopup } from "../components/loginPopup";
+import { useLang } from "../lib/i18n";
 
 // 谷歌官方四色 G 标志（品牌规范配色）
 function GoogleG({ className }: { className?: string }) {
@@ -235,7 +236,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
     const [aiGreet, setAiGreet] = useState<{ head: string; line: string } | null>(null);
 
     useEffect(() => {
-        fetch("/api/greeting")
+        fetch(`/api/greeting?lang=${typeof window !== "undefined" && localStorage.getItem("lang") === "en" ? "en" : "zh"}`)
             .then((r) => r.json())
             .then((d) => { if (d.success && d.data?.head && d.data?.line) setAiGreet(d.data); })
             .catch(() => { /* 静默回落 */ });
@@ -306,6 +307,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
         return () => clearInterval(t);
     }, [pausedR, rightItems.length]);
 
+    const { t } = useLang();
     const idx = heroItems.length === 0 ? 0 : Math.min(active, heroItems.length - 1);
     const current = heroItems[idx] || null;
     const idxR = rightItems.length === 0 ? 0 : Math.min(activeR, rightItems.length - 1);
@@ -343,7 +345,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                 </span>
                 <div className="pointer-events-none flex min-h-0 flex-1 flex-col">
                     <div className="gx-greet shrink-0 font-display text-[40px] font-bold leading-none tracking-tight sm:text-[52px]">
-                        {aiGreet?.head || greet}
+                        {t(aiGreet?.head || greet)}
                     </div>
                     {/* 正文动态字号：flex-1 吃掉到浮卡之间的全部空白，二分出恰好填满的字号 */}
                     <div className="mt-2.5 flex min-h-0 flex-1 flex-col">
@@ -352,9 +354,9 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                             text={(() => {
                                 const raw = aiGreet
                                     ? aiGreet.line
-                                    : `今天想看点什么？${pool.length > 0 ? ` 你的 ${pool.length} 部收藏都在这里` : ""}`;
-                                const t = raw.trim();
-                                return /[。！？!?…”）)]$/.test(t) ? t : `${t}。`; // 句末补句号
+                                    : `${t("今天想看点什么？")}${pool.length > 0 ? ` · ${pool.length}` : ""}`;
+                                const txt = raw.trim();
+                                return /[。！？!?…”）)]$/.test(txt) ? txt : `${txt}。`; // 句末补句号
                             })()}
                         />
                     </div>
@@ -384,7 +386,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                             </div>
                             <div className="flex min-w-0 flex-1 flex-col justify-center">
                                 <div className="text-[10px] font-semibold tracking-[0.24em] text-text-3 dark:text-white/50">
-                                    今日头条 · {typeCaption[current.type] || current.type}{current.year ? ` · ${current.year}` : ""}{current.rating ? ` · ★ ${Number(current.rating).toFixed(1)}` : ""}
+                                    {""}{typeCaption[current.type] || current.type}{current.year ? ` · ${current.year}` : ""}{current.rating ? ` · ★ ${Number(current.rating).toFixed(1)}` : ""}
                                 </div>
                                 <div className="mt-1 line-clamp-1 font-display text-[16px] tracking-tight text-text-1 dark:text-white sm:text-[18px]">{current.title}</div>
                                 <div className="mt-2.5 flex flex-wrap items-center gap-2">
@@ -499,9 +501,9 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                     <div className="flex items-baseline justify-between border-b border-line/70 px-4 py-2.5">
                         <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-text-1">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-primary" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
-                            今日热搜
+                            {t("今日热搜")}
                         </span>
-                        <span className="text-[10px] tracking-[0.18em] text-text-3">每天更新</span>
+                        <span className="text-[10px] tracking-[0.18em] text-text-3">{t("每天更新")}</span>
                     </div>
                     <ol className="scrollbar-hide min-h-0 flex-1 divide-y divide-line/60 overflow-y-auto py-1">
                         {hot.map((x) => (
@@ -552,6 +554,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
    全屏黑幕，卡面快速轮播候选海报、按二次曲线减速，定格揭晓命运之选：
    卡片放大 + 品牌橙光环，1.6s 后自动进入（也可手动"就看它/算了"）。 */
 function LuckyDraw({ pool, onClose }: { pool: MediaItem[]; onClose: () => void }) {
+    const { t: tL } = useLang();
     const router = useRouter();
     const [frame, setFrame] = useState(0);
     const [done, setDone] = useState(false);
@@ -603,17 +606,17 @@ function LuckyDraw({ pool, onClose }: { pool: MediaItem[]; onClose: () => void }
             <div className="mt-5 h-7 text-center">
                 {done
                     ? <span className="text-[17px] font-semibold text-white">{pick.title}</span>
-                    : <span className="text-[13px] tracking-[0.2em] text-white/60">命运抽取中…</span>}
+                    : <span className="text-[13px] tracking-[0.2em] text-white/60">{tL("命运抽取中…")}</span>}
             </div>
             {done && (
                 <div className="mt-3 flex items-center gap-2.5">
                     <button onClick={() => router.push(itemHref(pick))}
                         className="cursor-pointer rounded-full bg-primary px-5 py-2 text-[13px] font-semibold text-white transition-transform hover:scale-105">
-                        就看它 →
+                        {tL("就看它 →")}
                     </button>
                     <button onClick={onClose}
                         className="cursor-pointer rounded-full border border-white/30 px-4 py-2 text-[13px] text-white/80 transition-colors hover:bg-white/10">
-                        算了
+                        {tL("算了")}
                     </button>
                 </div>
             )}
@@ -628,6 +631,7 @@ function LuckyDraw({ pool, onClose }: { pool: MediaItem[]; onClose: () => void }
 function DeckRow({ continueItems, allPool }: {
     continueItems: ContinueItem[]; allPool: MediaItem[];
 }) {
+    const { t: t2 } = useLang();
     const cw = continueItems.find((i) => i.type !== "book") || continueItems[0] || null;
     const book = continueItems.find((i) => i.type === "book") || null;
     const [drawing, setDrawing] = useState(false);
@@ -664,18 +668,18 @@ function DeckRow({ continueItems, allPool }: {
                 {cw && (
                     <Card
                         href={cw.type === "book" ? `/reader/epub?path=${encodeURIComponent(cw.path)}` : `/watch?filePath=${encodeURIComponent(cw.path)}`}
-                        tag="接着看" title={cw.title}
+                        tag={t2("接着看")} title={cw.title}
                         sub={`${cw.episodeLabel ? `看到 ${cw.episodeLabel} · ` : ""}${cw.progressPct}%`}
                         thumb={cw.poster ? proxyImg(cw.poster) : `/api/media/thumbnail?filePath=${encodeURIComponent(cw.path)}`}
                     />
                 )}
                 <Card
                     href={book ? `/reader/epub?path=${encodeURIComponent(book.path)}` : "/bookshelf"}
-                    tag={book ? "继续阅读" : "书架"} title={book ? book.title : "翻开一本书"}
+                    tag={book ? t2("继续阅读") : t2("书架")} title={book ? book.title : t2("翻开一本书")}
                     sub={book ? `已读 ${book.progressPct}%` : undefined}
                     icon="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"
                 />
-                <Card onClick={() => setDrawing(true)} tag="手气" title="随机来一部" sub="交给命运"
+                <Card onClick={() => setDrawing(true)} tag={t2("手气")} title={t2("随机来一部")} sub={t2("交给命运")}
                     icon="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9z" />
             </div>
         </section>
@@ -708,12 +712,13 @@ function GalleryScroller({ children }: { children: React.ReactNode }) {
    竖版就竖版（有正式海报/书封 2:3）、横版就横版（截帧缩略 16:9），不强行转化。
    封面统一高度、宽度各按天生比例；一行放得下几张放几张，超出裁掉 + 右缘渐隐。 */
 function ContinueRow({ items }: { items: ContinueItem[] }) {
+    const { t } = useLang();
     if (items.length === 0) return null;
     return (
         <section>
             <div className="mb-3 flex items-baseline justify-between">
-                <h2 className="text-[20px] font-medium text-text-1">继续观看</h2>
-                <a href="/history" className="text-[13px] text-text-3 transition-colors hover:text-primary">全部记录 →</a>
+                <h2 className="text-[20px] font-medium text-text-1">{t("继续观看")}</h2>
+                <a href="/history" className="text-[13px] text-text-3 transition-colors hover:text-primary">{t("全部记录 →")}</a>
             </div>
             <div
                 className="flex items-start gap-3 overflow-hidden"
@@ -764,6 +769,7 @@ function GalleryRow({ no, title, items, onRefresh }: {
     items: MediaItem[];
     onRefresh: () => void;
 }) {
+    const { t: tG } = useLang();
     if (!items || items.length === 0) return null;
     const cinema = isCinema(items[0]?.type);
     return (
@@ -779,13 +785,13 @@ function GalleryRow({ no, title, items, onRefresh }: {
             <div className="relative mb-3 flex items-end gap-5 pt-5">
                 <div className="flex items-baseline gap-3">
                     <span className="font-display text-[13px] tracking-[0.35em] text-primary">{no}</span>
-                    <h2 className="font-display text-[24px] tracking-tight text-text-1">{title}</h2>
+                    <h2 className="font-display text-[24px] tracking-tight text-text-1">{tG(title)}</h2>
                 </div>
                 <button
                     onClick={onRefresh}
                     className="flex cursor-pointer items-center gap-1 text-[13px] text-text-3 transition-colors hover:text-primary"
                 >
-                    换一批 <span className="text-[15px]">↻</span>
+                    {tG("换一批")} <span className="text-[15px]">↻</span>
                 </button>
             </div>
             <div className="flex w-max gap-4">

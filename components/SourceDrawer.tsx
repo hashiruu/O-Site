@@ -5,6 +5,7 @@
 // 用于 watch 页未收录目录、播放失败等场景；portal 到 body 防 transform 劫持。
 import { createPortal } from "react-dom";
 import { fetchOutLinks } from "../lib/fetch-out";
+import { useLang } from "../lib/i18n";
 
 export function SourceDrawer({ title, kind = "series", open, onClose }: {
     title: string;
@@ -12,6 +13,7 @@ export function SourceDrawer({ title, kind = "series", open, onClose }: {
     open: boolean;
     onClose: () => void;
 }) {
+    const { t } = useLang();
     if (!open) return null;
     const links = fetchOutLinks(title, kind);
 
@@ -21,10 +23,10 @@ export function SourceDrawer({ title, kind = "series", open, onClose }: {
             {/* 右侧抽屉 */}
             <div className="animate-drawerIn absolute right-0 top-0 flex h-full w-[340px] max-w-[88vw] flex-col border-l border-line bg-bg-card shadow-2xl">
                 <div className="border-b border-line/70 px-5 pb-4 pt-5">
-                    <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">视频源 · 站外观看</div>
+                    <div className="text-[11px] font-semibold tracking-[0.22em] text-text-3">{t("视频源 · 站外观看")}</div>
                     <div className="mt-1.5 line-clamp-2 text-[17px] font-semibold text-text-1">《{title}》</div>
                     <p className="mt-1.5 text-[12px] leading-relaxed text-text-3">
-                        这部内容本站还没有可播放的文件。挑一个平台接着看：
+                        {t("这部内容本站还没有可播放的文件。挑一个平台接着看：")}
                     </p>
                 </div>
                 <div className="scrollbar-hide min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
@@ -44,7 +46,7 @@ export function SourceDrawer({ title, kind = "series", open, onClose }: {
                             >
                                 <span>{l.name}</span>
                                 <span className="flex items-center gap-1.5 text-[11px] text-text-3">
-                                    {l.en && <span className="rounded bg-bg-tag px-1.5 py-0.5">英文平台</span>}
+                                    {l.en && <span className="rounded bg-bg-tag px-1.5 py-0.5">{t("英文平台")}</span>}
                                     {internal ? (
                                         <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                                     ) : (
@@ -60,7 +62,7 @@ export function SourceDrawer({ title, kind = "series", open, onClose }: {
                         href={`/search?q=${encodeURIComponent(title)}`}
                         className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-line px-4 py-3 text-[14px] text-text-2 transition-colors hover:border-primary/50 hover:text-primary"
                     >
-                        先搜搜本站有没有
+                        {t("先搜搜本站有没有")}
                         <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
@@ -68,7 +70,7 @@ export function SourceDrawer({ title, kind = "series", open, onClose }: {
                 </div>
                 <div className="border-t border-line/70 p-4">
                     <button onClick={onClose} className="w-full cursor-pointer rounded-full border border-line py-2 text-[13px] text-text-3 transition-colors hover:bg-bg-hover hover:text-text-1">
-                        关闭
+                        {t("关闭")}
                     </button>
                 </div>
             </div>
