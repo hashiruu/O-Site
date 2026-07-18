@@ -101,14 +101,6 @@ EPUB / PDF / Markdown 通吃，进书架点封面即读。
 - 进度、收藏、笔记、历史，用户间完全隔离；**随机添加/外站条目管理仅管理员**
 - **用户行为监督后台** + **AI 成本看板**：DeepSeek 每次调用的 token 与费用按组件分账
 
-## 🔧 技术底色（给同行看的部分）
-
-- **图片链路四层防线**：同源代理（零 CORS）→ 磁盘缓存（跨重启存活）→ blob 管线（免疫浏览器懒加载干预）→ onLoad 状态复原。首页 banner 曾经的六种"偶发不显示"病因，每一种都有专门的解法
-- **WebGL 三件套**：流体丝绸 hero、置换溶解转场、（收藏在代码库里的）Three.js 太阳系星图——全部懒加载、DPR 封顶、离屏暂停、上下文丢失自愈
-- **2026 中文排版**：`text-autospace` 中西文自动加空 + `text-spacing-trim` 标点挤压 + `text-wrap: pretty` 正文防孤字——告别手动"盘古之白"
-- **生产铁律**：`next build + next start` 跑站；页面 HTML no-cache 而静态资源 immutable——改完代码，用户永远拿得到新版本
-- **PWA + 全端适配**：iPhone 刘海屏 / iPad / 桌面，manifest + robots + 错误边界齐备，加到主屏幕就是个 App
-
 ## 🚀 起飞
 
 ```bash

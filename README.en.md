@@ -101,14 +101,6 @@ Don't have it locally? **We don't play dead — we find it.**
 - Progress, favorites, notes, history — fully isolated per user; **random-add and external-item management are admin-only**
 - **User activity oversight** + **AI cost dashboard**: every DeepSeek call's tokens and cost, itemized by component
 
-## 🔧 Under the Hood (For Fellow Builders)
-
-- **A four-layer image pipeline**: same-origin proxy (zero CORS) → disk cache (survives restarts) → blob pipeline (immune to browser lazy-load interventions) → onLoad state recovery. The home banner once had six distinct "sometimes it doesn't show" root causes; each got its own cure
-- **WebGL trio**: fluid-silk hero, displacement-dissolve transitions, and a Three.js solar-system library map (archived in the codebase) — all lazy-loaded, DPR-capped, paused off-screen, context-loss self-healing
-- **2026 CJK typography**: `text-autospace` + `text-spacing-trim` + `text-wrap: pretty` — no more hand-typed spaces between Chinese and Latin
-- **Production discipline**: `next build + next start`; page HTML is no-cache while static assets are immutable — ship code, users get it immediately
-- **PWA + full-device fit**: notched iPhones, iPad, desktop; manifest, robots, error boundaries all in place
-
 ## 🚀 Lift-off
 
 ```bash
