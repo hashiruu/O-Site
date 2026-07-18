@@ -13,7 +13,7 @@ import { resolveUserKeyOrNull } from "@/lib/identity";
 export const dynamic = "force-dynamic";
 const execFileAsync = promisify(execFile);
 
-const EDGE_TTS = "/home/steven/.local/bin/edge-tts";
+import { EDGE_TTS_BIN as EDGE_TTS } from "@/lib/paths";
 const VOICES = new Set(["zh-CN-XiaoxiaoNeural", "zh-CN-YunxiNeural", "zh-CN-XiaoyiNeural", "zh-CN-YunyangNeural", "zh-CN-YunjianNeural"]);
 
 export async function POST(req: NextRequest) {

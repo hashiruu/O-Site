@@ -9,7 +9,7 @@ import { getAccess, allows } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
-const ROOT = "/home/steven/mydrive/重要资料！/旅行相册";
+import { TRAVEL_ROOT as ROOT } from "@/lib/paths";
 const IMG_RE = /\.(jpg|jpeg|png|webp)$/i;
 const VID_RE = /\.(mov|mp4|avi|mts|m2ts|webm|mkv)$/i;
 

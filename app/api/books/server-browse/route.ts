@@ -7,7 +7,7 @@ import { isPathUnder } from "@/lib/path-guard";
 
 export const dynamic = "force-dynamic";
 
-const ROOT = "/home/steven/mydrive";
+import { SOURCE_ROOT as ROOT } from "@/lib/paths";
 const BOOK_EXTS = new Set([".epub", ".pdf", ".md", ".mobi"]);
 const MAX_ENTRIES = 800;
 

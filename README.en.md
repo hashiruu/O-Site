@@ -147,3 +147,5 @@ npm start          # production mode, pick your port (e.g. next start -p 3024)
 **O-Site**. Turning "what should we watch tonight" into the happiest problem you have.
 
 </div>
+
+<sub>License: [CC BY-NC 4.0](LICENSE) · free to share and adapt, no commercial use</sub>

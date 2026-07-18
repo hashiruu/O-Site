@@ -10,7 +10,7 @@ export interface MediaDir {
     type?: string; // 'movie' | 'series' | 'anime' | 'private' | 'travel' | 'theater' | ...
 }
 
-const TRAVEL_ROOT = "/home/steven/mydrive/重要资料！/旅行相册";
+import { TRAVEL_ROOT } from "./paths";
 
 /** 标准公开影音类型（推荐/首页 feed 只出这些，theater相册/日常 等个人相册类不算） */
 export const PUBLIC_TYPES = ["movie", "series", "anime"];

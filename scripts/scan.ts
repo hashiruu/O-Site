@@ -1,7 +1,7 @@
 import { scanMediaDirectory } from "../lib/scanner";
 
 async function main() {
-    const scanPath = process.argv[2] || "/home/steven/nas-app/data";
+    const scanPath = process.argv[2] || "./data";
     const scanType = process.argv[3] || "movie";
     const scanName = process.argv[4] || "Manual Scan";
     console.log(`Starting manual scan: ${scanPath} (${scanType})...`);

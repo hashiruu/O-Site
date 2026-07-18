@@ -19,7 +19,7 @@ import { extractBookText, isReadableBook } from "@/lib/book-text";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_ROOTS = ["/home/steven/mydrive/book", "/home/steven/mydrive/PAPERS"];
+import { BOOK_ALLOWED_ROOTS as ALLOWED_ROOTS } from "@/lib/paths";
 
 let ensured = false;
 function ensureTable() {

@@ -43,7 +43,7 @@ function coOccurrence(text: string, names: string[], max = 8): string[] {
 export const dynamic = "force-dynamic";
 const DS_BASE = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/anthropic";
 const DS_MODEL = process.env.DEEPSEEK_REL_MODEL || "deepseek-chat";
-const ALLOWED_ROOTS = ["/home/steven/mydrive/book", "/home/steven/mydrive/PAPERS"];
+import { BOOK_ALLOWED_ROOTS as ALLOWED_ROOTS } from "@/lib/paths";
 
 function token(): string | null {
     try { return fs.readFileSync(path.join(os.homedir(), ".config", "deepseek-token"), "utf-8").trim() || null; }

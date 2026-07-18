@@ -4,7 +4,8 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-export const MUSIC_DIR = "/home/steven/Music";
+import { MUSIC_DIR } from "./paths";
+export { MUSIC_DIR };
 const INDEX_PATH = path.join(process.cwd(), "data", "music-index.json");
 
 export const MOOD_BUCKETS = ["calm", "warm", "sad", "mystery", "tension", "dark", "epic", "wonder", "lonely", "romance"] as const;

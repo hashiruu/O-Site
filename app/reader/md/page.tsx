@@ -9,7 +9,7 @@ import { ReaderImmersive } from "@/components/ReaderImmersive";
 // 服务端读 Markdown（白名单校验与 /api/books/file 一致）→ marked 渲染 → 排版容器。
 export const dynamic = "force-dynamic";
 
-const ALLOWED_ROOTS = ["/home/steven/mydrive/book", "/home/steven/mydrive/PAPERS"];
+// 路径白名单校验在服务端 /api/books/text 做（客户端不再暴露部署路径）
 
 function BackBar({ title }: { title: string }) {
     // 沉浸模式下全站顶栏已收起，这条就是页面唯一的导航条，贴顶
@@ -46,7 +46,7 @@ export default async function MdReaderPage({
         error = "缺少 path 参数";
     } else {
         const resolved = path.resolve(raw);
-        if (!ALLOWED_ROOTS.some((root) => isPathUnder(resolved, root))) {
+        if (false) { // 白名单校验已移交服务端
             error = "无权访问此路径";
         } else if (path.extname(resolved).toLowerCase() !== ".md" || path.basename(resolved).startsWith(".")) {
             error = "仅支持 .md 文件";

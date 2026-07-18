@@ -394,7 +394,7 @@ export default function AdminPage() {
                                 <input
                                     value={newPath}
                                     onChange={(e) => { setNewPath(e.target.value); setAddError(""); }}
-                                    placeholder="例如: /home/steven/movies"
+                                    placeholder="例如: /srv/media/movies"
                                     className="w-full px-3 py-2.5 rounded-lg bg-bg-input border border-line text-text-1 text-sm placeholder:text-text-3 focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>

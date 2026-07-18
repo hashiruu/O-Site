@@ -5,10 +5,10 @@ import path from "path";
 // /api/books/import：后台书籍导入。
 // POST multipart formData：files[]（多文件）+ category（5 个基础分类之一）。
 // 校验：分类白名单、扩展名白名单、文件名 sanitize（去路径分隔符/隐藏前缀）、单文件 ≤300MB。
-// 落盘 /home/steven/mydrive/book/<分类>/，同名加 " (2)" 后缀不覆盖。
+// 落盘 BOOK_DIR/<分类>/，同名加 " (2)" 后缀不覆盖。
 export const dynamic = "force-dynamic";
 
-const BOOK_DIR = "/home/steven/mydrive/book";
+import { BOOK_DIR } from "@/lib/paths";
 const CATEGORIES = new Set(["推理悬疑", "科幻", "文学名著", "科研学术", "技术文档", "其他"]);
 const ALLOWED_EXTS = new Set([".epub", ".pdf", ".md", ".mobi"]);
 const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB

@@ -9,7 +9,7 @@ import { getAccess, allows } from "@/lib/roles";
 export const dynamic = "force-dynamic";
 
 // 旅行相册根目录（settings media_dir 之一）
-const ROOT = "/home/steven/mydrive/重要资料！/旅行相册";
+import { TRAVEL_ROOT as ROOT } from "@/lib/paths";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
     // 内容范围守卫：travel 类别需在用户 scope 内（boss/admin 全开）

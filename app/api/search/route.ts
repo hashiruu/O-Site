@@ -12,8 +12,8 @@ import { getAccess, allows, typeFilterSql, canAdminSite, canManageUsers, type Ac
 
 export const dynamic = "force-dynamic";
 
-const BOOK_DIR = "/home/steven/mydrive/book";
-const PAPERS_DIR = "/home/steven/mydrive/PAPERS";
+import { BOOK_DIR, PAPERS_DIR } from "@/lib/paths";
+
 const BOOK_EXTS = new Set([".epub", ".pdf", ".md", ".mobi"]);
 const BOOK_CATEGORIES = ["推理悬疑", "科幻", "文学名著", "科研学术", "技术文档", "其他"];
 const MAX_PER_SOURCE = 30;

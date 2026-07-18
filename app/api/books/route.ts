@@ -10,8 +10,8 @@ import path from "path";
 // - 论文分类：~/mydrive/PAPERS 的一级子目录（CV/LLM/NLP/Sys）即分类名
 export const dynamic = "force-dynamic";
 
-const BOOK_DIR = "/home/steven/mydrive/book";
-const PAPERS_DIR = "/home/steven/mydrive/PAPERS";
+import { BOOK_DIR, PAPERS_DIR } from "@/lib/paths";
+
 
 const BOOK_EXTS = new Set([".pdf", ".epub", ".mobi", ".md"]);
 

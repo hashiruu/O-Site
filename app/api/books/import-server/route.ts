@@ -9,8 +9,8 @@ import { isPathUnder } from "@/lib/path-guard";
 
 export const dynamic = "force-dynamic";
 
-const SOURCE_ROOT = "/home/steven/mydrive";
-const BOOK_DIR = "/home/steven/mydrive/book";
+import { SOURCE_ROOT, BOOK_DIR } from "@/lib/paths";
+
 const CATEGORIES = new Set(["推理悬疑", "科幻", "文学名著", "科研学术", "技术文档", "其他"]);
 const ALLOWED_EXTS = new Set([".epub", ".pdf", ".md", ".mobi"]);
 const MAX_FILES = 500;

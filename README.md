@@ -147,3 +147,5 @@ npm start          # 生产模式，端口自定（如 next start -p 3024）
 **O-Site**，把"今晚看什么"变成最幸福的难题。
 
 </div>
+
+<sub>License: [CC BY-NC 4.0](LICENSE) · 自由分享与改编，禁止商用</sub>

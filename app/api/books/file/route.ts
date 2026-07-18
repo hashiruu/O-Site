@@ -8,7 +8,7 @@ import { isPathUnder } from "@/lib/path-guard";
 // 只读文件路由，白名单严格限定书架两个数据源目录，防目录穿越（path-guard 的 relative 判定）。
 export const dynamic = "force-dynamic";
 
-const ALLOWED_ROOTS = ["/home/steven/mydrive/book", "/home/steven/mydrive/PAPERS"];
+import { BOOK_ALLOWED_ROOTS as ALLOWED_ROOTS } from "@/lib/paths";
 
 const MIME: Record<string, string> = {
     ".pdf": "application/pdf",

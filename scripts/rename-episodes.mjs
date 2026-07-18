@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dir = process.argv[2] || "/home/steven/mydrive/anime/名侦探柯南";
+const dir = process.argv[2]; if (!dir) { console.error("usage: node rename-episodes.mjs <dir>"); process.exit(1); }
 const db = new Database(path.resolve(__dirname, "..", "data", "nas-media.db"));
 const assDir = path.join(dir, "danmaku");
 

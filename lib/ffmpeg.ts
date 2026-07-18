@@ -7,7 +7,7 @@ function resolveBinary(envVar: string, name: string): string {
     if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
 
     const candidates = [
-        path.join(process.env.HOME || "/home/steven", ".local/bin", name),
+        path.join(process.env.HOME || require("os").homedir(), ".local/bin", name),
         `/usr/local/bin/${name}`,
         `/usr/bin/${name}`,
     ];

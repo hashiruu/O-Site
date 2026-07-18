@@ -15,8 +15,8 @@ import { isPathUnder } from "@/lib/path-guard";
 // 提取失败一律 404，前端落生成式封面。
 export const dynamic = "force-dynamic";
 
-const ALLOWED_ROOTS = ["/home/steven/mydrive/book", "/home/steven/mydrive/PAPERS"];
-const CACHE_DIR = "/home/steven/mydrive/nas-app/data/book-covers";
+import { BOOK_ALLOWED_ROOTS as ALLOWED_ROOTS, BOOK_COVER_CACHE_DIR as CACHE_DIR } from "@/lib/paths";
+
 
 const UNZIP = "/usr/bin/unzip";
 const PDFTOPPM = "/usr/bin/pdftoppm";
