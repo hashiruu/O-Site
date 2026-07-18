@@ -28,6 +28,10 @@ Most self-hosted media solutions are a file list with playback. O-Site aims for 
 
 ## 🏠 Home: A Foyer That Knows You
 
+<img src="docs/shots/home.png" alt="Home" width="100%" />
+
+*AI greeting · Everyday Different banner · daily trending · command deck · continue watching — all in one screen*
+
 | Feature | What it does | How to use |
 |---|---|---|
 | **AI personalized greeting** | Greets you in a Murakami-esque voice: it reads your last 10 reading/watching records, weaves in local weather and the hour, and writes a paragraph that belongs only to you. Font size auto-fits the card | Works once logged in, refreshes every 3 hours. Requires a DeepSeek key; falls back to a time-of-day greeting without one |
@@ -51,9 +55,15 @@ Most self-hosted media solutions are a file list with playback. O-Site aims for 
 
 **Player** — HLS transcoding, embedded subtitles, shortcuts (space to pause, ←→ to seek), favorites, live progress reporting
 
+<img src="docs/shots/musical.png" alt="Musicals" width="100%" />
+
 **Musicals** (`/category/musical`) — a curated list of 48 Broadway/West End classics (Hamilton, Phantom, Les Mis, Wicked…), 10 daily rotating picks; admin can random-add or keyword-add; cards jump to pro-shot platforms
 
 ## 📚 Reader: An AI That Finishes the Book With You
+
+<img src="docs/shots/reader.png" alt="EPUB reader" width="100%" />
+
+*Two-column layout · clickable AI annotations · toolbar: narration / auto-read / focus / temperature / graph / Q&A*
 
 EPUB / PDF / Markdown. Open a cover on the bookshelf and go.
 
@@ -69,6 +79,8 @@ EPUB / PDF / Markdown. Open a cover on the bookshelf and go.
 | 📝 **Reading notes** | Highlighter + drag-in images, draggable float window | Auto-synced into the site-wide Notes page |
 | 🎨 **Appearance** | Font/size/line-height/bold/themes; **day-night synced with the whole site**, silky slide transitions, never a white flash | Settings panel, instant apply |
 
+<img src="docs/shots/bookshelf.png" alt="Bookshelf" width="100%" />
+
 **Bookshelf** (`/bookshelf`) — Apple-Books-style shelves with real covers, a Reading-Now card with ring progress, a Finished section, instant search; plus an external booklist (Douban picks that open in WeRead / Anna's Archive / etc.)
 
 ## 🌐 Fetch Out As We Can
@@ -77,9 +89,19 @@ Don't have it locally? **We don't play dead — we find it.**
 
 - **Eight-direction popover**: opens at your cursor, auto-oriented by a 3×3 screen grid, never clipped. Synopsis first, platforms second
 - **Platform matrix**: film/TV → Tencent/iQiyi/Bilibili/Youku + JustWatch; anime → Bilibili + Crunchyroll; musicals → Bilibili pro-shots/YouTube/BroadwayHD; books → WeRead/Douban/Anna's Archive/JD + Google Books
+<img src="docs/shots/embed.png" alt="Embedded Bilibili" width="100%" />
+
 - **Embedded Bilibili viewing** (`/embed`): search in-site → full-page iframe (**log in to your Bilibili account, unlock high quality**) → heartbeat progress tracking → resume from where you left off
 
 ## ✨ The Living Quarters
+
+<table><tr>
+<td width="50%"><img src="docs/shots/notes.png" alt="Notes" /><br /><em>Notes: iPad-Notes looks × Markdown core (preview mode)</em></td>
+<td width="50%"><img src="docs/shots/history.png" alt="History" /><br /><em>History dashboard: stat cards + a merged video-and-books timeline</em></td>
+</tr><tr>
+<td width="50%"><img src="docs/shots/missed.png" alt="Missed" /><br /><em>Missed: the catch-up list</em></td>
+<td width="50%"><img src="docs/shots/sports.png" alt="Sports" /><br /><em>Sports: World Cup knockout rings, auto-refreshing scores</em></td>
+</tr></table>
 
 | Page | What & how |
 |---|---|

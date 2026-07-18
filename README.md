@@ -28,6 +28,10 @@
 
 ## 🏠 首页：会认识你的门厅
 
+<img src="docs/shots/home.png" alt="首页" width="100%" />
+
+*AI 问候 · Everyday Different banner · 今日热搜 · 掌舵台 · 继续观看——一屏尽览*
+
 | 功能 | 它做什么 | 怎么用 |
 |---|---|---|
 | **AI 个性化问候** | 用村上春树的笔触向你道晚安：读过你近 10 条阅读/观看记录，结合当地天气与时刻，写一段只属于你的话。字号自动填满卡片空隙 | 登录即有，每 3 小时更新一次。DeepSeek key 配好后自动生效，没配则回落时间问候 |
@@ -51,9 +55,15 @@
 
 **播放器** —— HLS 转码、内嵌字幕、快捷键（空格暂停 / ←→ 快进退）、收藏标记、进度实时上报
 
+<img src="docs/shots/musical.png" alt="音乐剧专区" width="100%" />
+
 **音乐剧专区**（`/category/musical`）—— 48 部百老汇/西区精选清单（Hamilton、歌剧魅影、悲惨世界、Wicked…），每日轮换 10 部推荐；管理员可随机添加/关键词添加收藏；点卡跳 B站官摄/腾讯/YouTube/BroadwayHD
 
 ## 📚 阅读器：AI 陪你翻完整本书
+
+<img src="docs/shots/reader.png" alt="EPUB 阅读器" width="100%" />
+
+*双栏排版 · AI 注解词高亮可点 · 顶栏一排：朗读 / 自动阅读 / 聚焦 / 温度 / 关系图 / 问答*
 
 EPUB / PDF / Markdown 通吃，进书架点封面即读。
 
@@ -69,6 +79,8 @@ EPUB / PDF / Markdown 通吃，进书架点封面即读。
 | 📝 **阅读笔记** | 荧光笔高亮 + 图片拖入，可拖浮窗，跳转/跳回 | 自动同步到全站"笔记"页（见下） |
 | 🎨 **外观** | 字号/字体/行距/加粗/背景主题/翻页方式；**日夜与全站主题双向同步**，进出阅读器丝滑滑入滑出、永不闪白 | 设置面板即改即生效 |
 
+<img src="docs/shots/bookshelf.png" alt="书架" width="100%" />
+
 **书架**（`/bookshelf`）—— Apple Books 式书架：真实封面立在搁板上，在读大卡带圆环进度，"已读完"专栏，分类快跳，即时搜索；外站书单（豆瓣榜单来的推荐，点封面跳微信读书/Anna's Archive 等）
 
 ## 🌐 Fetch Out As We Can
@@ -77,9 +89,19 @@ EPUB / PDF / Markdown 通吃，进书架点封面即读。
 
 - **八方位悬浮窗**：从你的鼠标位置展开，按屏幕 3×3 分区自动选方向，永不出界。先展示简介（点击展开全文），再列平台
 - **平台矩阵**：影视→腾讯/爱奇艺/B站/优酷 + JustWatch 兜底；动漫→B站优先 + Crunchyroll；音乐剧→B站官摄/YouTube/BroadwayHD；图书→微信读书/豆瓣/Anna's Archive/京东 + Google Books
+<img src="docs/shots/embed.png" alt="B站站内嵌入观看" width="100%" />
+
 - **B站站内嵌入观看**（`/embed`）：不离站看B站——站内搜索（封面/UP主/播放数）→ 整页 iframe（**可登录B站账号、可切高画质**）→ 观看进度心跳记录 → "继续看"横条从记录点续播。所有 fetch-out 菜单的 B站条目都直达这里
 
 ## ✨ 生活区
+
+<table><tr>
+<td width="50%"><img src="docs/shots/notes.png" alt="笔记" /><br /><em>笔记：iPad 备忘录颜值 × Markdown 内核（预览模式）</em></td>
+<td width="50%"><img src="docs/shots/history.png" alt="观看历史" /><br /><em>观看历史 Dashboard：统计卡 + 影音与书同账时间线</em></td>
+</tr><tr>
+<td width="50%"><img src="docs/shots/missed.png" alt="Missed" /><br /><em>Missed：热点补课清单</em></td>
+<td width="50%"><img src="docs/shots/sports.png" alt="体育" /><br /><em>体育：世界杯五环对阵图，比分自动刷新</em></td>
+</tr></table>
 
 | 页面 | 功能与用法 |
 |---|---|
