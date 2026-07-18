@@ -887,9 +887,10 @@ export default function Home() {
     }, [data]);
 
     const recommended = data.recommended || [];
-    // 随机一部/星图的候选池：全部分区打平
+    // 随机一部/星图的候选池：打平影视分区——排除旅行相册（家庭视频不是"来一部"的候选）
     const bentoPool = useMemo(
-        () => Object.values(data).flat().filter((i): i is MediaItem => !!i && !!(i as MediaItem).id),
+        () => [data.recommended, data.movie, data.series, data.anime].flat()
+            .filter((i): i is MediaItem => !!i && !!(i as MediaItem).id),
         [data]
     );
     const sections = [

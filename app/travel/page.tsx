@@ -29,14 +29,14 @@ function AlbumContent() {
     }, []);
 
     const load = useCallback(() => {
-        if (!album) return;
+        if (!album) { router.replace("/category/travel"); return; }
         setLoading(true);
         fetch(`/api/media/travel-album?name=${encodeURIComponent(album)}`)
             .then((r) => r.json())
             .then((d) => { if (d.success) setData(d.data); else setError(d.error || "加载失败"); })
             .catch(() => setError("网络错误"))
             .finally(() => setLoading(false));
-    }, [album]);
+    }, [album, router]);
 
     useEffect(() => { load(); }, [load]);
 

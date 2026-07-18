@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { FetchOutMenu } from "../../components/FetchOutMenu";
 import { RandomAddQuiz } from "../../components/RandomAddQuiz";
 import { useMe } from "../../components/useMe";
+import { useLang } from "@/lib/i18n";
 
 interface BookItem {
     title: string;
@@ -481,6 +482,7 @@ interface ProgressItem { bookPath: string; title: string; percent: number; updat
 const shelfCache: { books: BooksResponse | null } = { books: null };
 
 export default function BookshelfPage() {
+    const { t } = useLang();
     // stale-while-revalidate：从模块级缓存拿上次结果先渲染（再进书架瞬开、不再转圈），后台再刷新
     const [data, setData] = useState<BooksResponse | null>(shelfCache.books);
     const [error, setError] = useState<string | null>(null);
@@ -637,7 +639,7 @@ export default function BookshelfPage() {
                             )}
                         </div>
                         {q ? (
-                            <span className="text-[12px] text-text-3">命中 {hitCount} 本</span>
+                            <span className="text-[12px] text-text-3">{t("命中")} {hitCount} {t("本")}</span>
                         ) : (
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {[
@@ -645,13 +647,13 @@ export default function BookshelfPage() {
                                     ...(finished.length ? [{ id: "finished", label: "已读完" }] : []),
                                     ...baseEntries.filter(([, bs]) => bs.length > 0).map(([n]) => ({ id: `base-${n}`, label: n })),
                                     ...(Object.keys(data.论文分类 || {}).length ? [{ id: "papers", label: "论文" }] : []),
-                                ].map((t) => (
+                                ].map((tab) => (
                                     <button
-                                        key={t.id}
-                                        onClick={() => document.getElementById(`sec-${t.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                                        key={tab.id}
+                                        onClick={() => document.getElementById(`sec-${tab.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
                                         className="rounded-full border border-line px-2.5 py-1 text-[12px] text-text-3 transition-colors hover:border-primary hover:text-primary"
                                     >
-                                        {t.label}
+                                        {t(tab.label)}
                                     </button>
                                 ))}
                                 {isAdmin && (
@@ -661,7 +663,7 @@ export default function BookshelfPage() {
                                         title="按口味从中文书榜随机添加 10 本，站内没有就跳外站阅读（管理员）"
                                     >
                                         <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                                        随机添加
+                                        {t("随机添加")}
                                     </button>
                                 )}
                             </div>
@@ -672,8 +674,8 @@ export default function BookshelfPage() {
                     {!q && extBooks.length > 0 && (
                         <section id="sec-extbooks" className="mb-8">
                             <div className="mb-3 flex items-baseline gap-3">
-                                <h2 className="font-display text-[20px] tracking-tight text-text-1">外站书单</h2>
-                                <span className="text-[12px] text-text-3">{extBooks.length} 本 · 点封面选平台阅读</span>
+                                <h2 className="font-display text-[20px] tracking-tight text-text-1">{t("外站书单")}</h2>
+                                <span className="text-[12px] text-text-3">{extBooks.length} {t("本 · 点封面选平台阅读")}</span>
                             </div>
                             <div className="ios-scroll scrollbar-hide flex gap-4 overflow-x-auto pb-2">
                                 {extBooks.map((b) => (

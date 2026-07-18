@@ -148,7 +148,7 @@ export default function HistoryPage() {
                                 onClick={() => setTab(k)}
                                 className={`cursor-pointer rounded-full px-3.5 py-1.5 transition-colors ${tab === k ? "bg-bg-card font-semibold text-text-1 shadow-sm" : "text-text-3 hover:text-text-1"}`}
                             >
-                                {label}
+                                {t(label)}
                             </button>
                         ))}
                     </div>
@@ -182,7 +182,7 @@ export default function HistoryPage() {
                         <section key={g.label}>
                             <div className="mb-3 flex items-center gap-3">
                                 <h2 className="font-display text-[17px] tracking-tight text-text-1">{t(g.label)}</h2>
-                                <span className="text-[12px] text-text-3">{g.list.length} 条</span>
+                                <span className="text-[12px] text-text-3">{g.list.length} {t("条")}</span>
                                 <div className="h-px flex-1 bg-line/70" />
                             </div>
                             <div className="space-y-2.5">

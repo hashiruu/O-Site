@@ -97,6 +97,23 @@ const DICT: Record<string, string> = {
     "全部播放与阅读足迹": "All watching and reading footprints",
     "共": "Total", "项": "items", "决赛": "Final", "季军赛": "3rd place",
     "B站讨论区": "Bilibili discussions", "热点补课": "Trending catch-up", "正在拉取频道数据...": "Loading channel data...",
+    // 设置页
+    "外观与个性化": "Appearance", "深色模式": "Dark mode", "切换网站的昼夜主题效果": "Toggle light/dark theme", "浅色日间": "Light",
+    "深色夜间": "Dark",
+    "TMDB API 密钥": "TMDB API key", "输入你在 The Movie Database 申请的 v3 认证秘钥": "Enter your TMDB v3 API key",
+    "当填入秘钥后，扫描器将能够自动获取影片的海报图和故事梗概。": "With a key set, the scanner fetches posters and synopses automatically.",
+    "流媒体转码引擎": "Transcoding engine", "硬件加速优先": "Prefer hardware acceleration",
+    "FFmpeg 提取切片时尝试调用 NVENC / VAAPI。如果服务器没有显卡，请保持关闭以使用纯 CPU 序列。": "FFmpeg tries NVENC / VAAPI when slicing. If the server has no GPU, keep this off to use CPU only.",
+    "音频流地址": "Audio stream URL",
+    ".m3u8 走 HLS 解码，其余按连续音频流直连。由本地 audio 元素承载，音量可控，替代嵌入播放器的跨域音频。": "m3u8 uses HLS; others connect as continuous audio. Played by a local audio element with volume control.",
+    "弹幕流地址": "Danmaku stream URL",
+    "ws:// 走 WebSocket；http:// 自动识别 SSE 或轮询。每条建议含 text / color / type 字段。": "ws:// uses WebSocket; http:// auto-detects SSE or polling. Each item has text / color / type fields.",
+    "保存配置": "Save", "保存失败: ": "Save failed: ", "保存遇到网络错误": "Network error while saving", "加载配置失败": "Failed to load settings", "履约中...": "Saving...",
+    "如 http://<局域网IP>:8000/live.m3u8": "e.g. http://<LAN-IP>:8000/live.m3u8", "如 ws://<局域网IP>:9000": "e.g. ws://<LAN-IP>:9000",
+    // 书架分类
+    "推理悬疑": "Mystery", "科幻": "Sci-Fi", "文学名著": "Literature", "科研学术": "Academic", "技术文档": "Tech docs", "其他": "Other",
+    // 历史
+    "条": "items",
 };
 
 const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "zh", setLang: () => {} });
