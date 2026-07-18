@@ -94,7 +94,7 @@ export function BiliComments({ title }: { title: string }) {
     const totalPages = payload ? Math.max(1, Math.ceil(payload.page.count / payload.page.size)) : 1;
 
     return (
-        <section className="max-w-[1200px] mx-auto pt-4 pb-4">
+        <section className="max-w-[1200px] mx-auto pt-4 pb-0">
             <div className='rounded-2xl border border-line bg-bg-card p-6'>
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-baseline gap-3">

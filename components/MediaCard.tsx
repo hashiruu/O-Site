@@ -82,7 +82,7 @@ export function MediaCard({
                             src={item.thumb}
                             alt={item.title}
                             loading={priority ? "eager" : "lazy"}
-                            className="relative h-full w-full object-contain object-[center_30%] transition-[filter] duration-200 group-hover:brightness-105"
+                            className="relative h-full w-full object-cover object-[center_30%] transition-[filter] duration-200 group-hover:brightness-105"
                             onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                         />
                     </>

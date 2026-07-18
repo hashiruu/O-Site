@@ -116,7 +116,7 @@ function DetailContent() {
                     ) : (
                         <div className="h-full w-full" style={{ background: "radial-gradient(90% 120% at 70% 0%, var(--color-accent-glow) 0%, transparent 60%)" }} />
                     )}
-                    <div className="absolute inset-0 bg-black/30" />
+                    <div className="absolute inset-0 bg-black/15" />
                     <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-bg/20" />
                     <div className="absolute inset-0 bg-gradient-to-r from-bg/90 via-transparent to-transparent" />
                 </div>
