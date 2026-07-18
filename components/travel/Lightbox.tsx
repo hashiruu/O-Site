@@ -1,7 +1,10 @@
 "use client";
 
 // 全屏照片查看器：大图居中 + 左右切换 + 键盘 ← → ESC + 计数。
+// portal 到 body：travel 页容器链上有入场动画 transform，fixed 会被劫持包含块
+// （曾致整个 lightbox 遮罩/图/按钮全体错位）——顶层渲染一了百了。
 import { useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 interface Photo { name: string; url: string; }
 interface Props {
@@ -35,7 +38,7 @@ export function Lightbox({ photos, index, onClose, onIndex }: Props) {
     if (!photos.length) return null;
     const cur = photos[index];
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center select-none" onClick={onClose}>
             {/* 计数 */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-sm tabular-nums bg-white/10 px-3 py-1 rounded-full">
@@ -75,6 +78,7 @@ export function Lightbox({ photos, index, onClose, onIndex }: Props) {
                     aria-label="下一张"
                 >›</button>
             )}
-        </div>
+        </div>,
+        document.body
     );
 }
