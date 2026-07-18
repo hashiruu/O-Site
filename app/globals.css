@@ -1,0 +1,682 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════
+   B 站化设计系统 — bilibili-restyle
+   - 规则 0：一次只有一种设计语言（B 站语言），Apple TV/杂志元素退役
+   - 规则 1：粉=状态（选中/进行/hover/进度条），蓝=动作（链接/次级按钮/标签）
+   - 规则 2：彩色面积 ≤10%，大面积永远是白/灰阶
+   - 规则 3：亮色为默认，暗色保留
+   - 数值均为 2026-07-03 对 bilibili.com 真实页面 getComputedStyle 实测所得
+   - 唯一事实来源：docs/bilibili-restyle-spec.md
+   ════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── 强调色（取自 O-Site logo 朱橙，日间再提亮一档）── */
+  --color-bili-pink: #F0784A;      /* 品牌橙：状态/选中/进度条/hover */
+  --color-bili-blue: #00B5E5;      /* 品牌蓝：链接/次级动作 */
+  --color-brand-cyan: #00B5E5;
+  --color-accent-glow: rgba(240, 120, 74, 0.20);
+  --color-primary: #F0784A;
+  --color-primary-hover: #FF8A5A;
+  --color-secondary: #00B5E5;
+
+  /* ── 亮色（默认）：B 站白 ── */
+  --color-bg: #F1F2F3;             /* 页面底：浅灰，不是白 */
+  --color-bg-card: #FFFFFF;        /* 卡片/顶栏/面板：纯白 */
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-nav: rgba(255, 255, 255, 0.92);
+  --color-bg-input: #F1F2F3;       /* 搜索框灰底（与页面底同值，白色容器内成立） */
+  --color-bg-hover: #E3E5E7;
+  --color-bg-tag: #F1F2F3;
+  --color-bg-mask: rgba(0, 0, 0, 0.4);
+
+  --color-text-1: #18191C;
+  --color-text-2: #61666D;
+  --color-text-3: #9499A0;
+  --color-text-4: #C9CCD0;
+
+  --color-line: #E3E5E7;
+  --color-line-light: #F1F2F3;
+
+  --color-shadow-card: 0 0 0 rgba(0,0,0,0);   /* 卡片无阴影，靠留白分隔 */
+
+  /* 字体族：单一无衬线家族，靠字重分层 */
+  --font-display: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* 馆藏星图天空底：日间纯净白昼（星星换深色+正常混合），夜间深空 */
+:root {
+  --gx-sky: radial-gradient(130% 150% at 72% 12%, #FFFFFF 0%, #F7F8FA 55%, #EEF0F4 100%);
+}
+.dark {
+  --gx-sky: radial-gradient(130% 150% at 72% 12%, #16203A 0%, #0B1224 52%, #04070F 100%);
+}
+
+/* Hero 问候艺术字：渐变流光 background-clip 文字，日夜两套配色
+   （问候卡是干净底——日间白、夜间深空，文字永远不压在海报图上）。 */
+.gx-greet {
+  background-image: linear-gradient(100deg, #1D2433 8%, #F0784A 38%, #0E7FA8 68%, #1D2433 95%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gx-flow 9s ease-in-out infinite alternate;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.08));
+}
+.dark .gx-greet {
+  background-image: linear-gradient(100deg, #FDF6EC 8%, #FFCF9A 36%, #7FD8EF 68%, #FDF6EC 95%);
+  filter: drop-shadow(0 2px 16px rgba(120, 180, 255, 0.22));
+}
+@keyframes gx-flow {
+  from { background-position: 0% 0; }
+  to { background-position: 100% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gx-greet { animation: none; }
+}
+
+/* 问候卡星图点缀：小星缓慢明灭。尺寸用内联 style 覆盖（unlayered 样式优先于 utilities，
+   所以这里只写基础形态，位置交给 Tailwind 类，个别大小差异走 style）。 */
+.gx-star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #8A8F99;
+  box-shadow: 0 0 6px rgba(138, 143, 153, 0.5);
+  opacity: 0.2;
+  animation: gx-twinkle 3.6s ease-in-out infinite;
+}
+.dark .gx-star {
+  background: #BFD4FF;
+  box-shadow: 0 0 8px rgba(160, 200, 255, 0.7);
+}
+@keyframes gx-twinkle {
+  0%, 100% { transform: scale(0.6); opacity: 0.12; }
+  50% { transform: scale(1); opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gx-star { animation: none; }
+}
+
+/* ── 暗色：朱橙在暗底上提亮一档 ── */
+.dark {
+  --color-bili-pink: #EC6E42;
+  --color-bili-blue: #3DC5F0;
+  --color-brand-cyan: #3DC5F0;
+  --color-accent-glow: rgba(236, 110, 66, 0.25);
+  --color-primary: #EC6E42;
+  --color-primary-hover: #F08256;
+  --color-secondary: #3DC5F0;
+
+  --color-bg: #101014;
+  --color-bg-card: #17171C;
+  --color-bg-elevated: #1E1E24;
+  --color-bg-nav: rgba(16, 16, 20, 0.92);
+  --color-bg-input: #1E1E24;
+  --color-bg-hover: #26262E;
+  --color-bg-tag: #1E1E24;
+  --color-bg-mask: rgba(0, 0, 0, 0.65);
+
+  --color-text-1: #E6E6E8;
+  --color-text-2: #A2A7AE;
+  --color-text-3: #6E7379;
+  --color-text-4: #3A3D42;
+
+  --color-line: #26262E;
+  --color-line-light: #1E1E24;
+
+  --color-shadow-card: 0 0 0 rgba(0,0,0,0);
+}
+
+/* 注意：全局 reset 必须放进 @layer base，
+   否则未分层规则会压过所有 @layer utilities 里的 padding/margin 工具类
+   （历史上"页边距怎么都修不好/按钮框不住字"的总根源就是这里） */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    height: 100%;
+    /* iOS 优化：禁止橡皮筋回弹（让固定顶栏稳如原生），
+       禁止横竖屏自动调字号，打开 momentum 惯性滚动 */
+    overscroll-behavior-y: none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+body {
+  height: 100%;
+  font-family: var(--font-body);
+  /* 2026 中文排版：中西文/数字混排自动加空（CSS Text L4，text-autospace，
+     全主流浏览器 2025.11 起支持；已有手写空格处不会重复插入，旧浏览器无副作用）。
+     text-spacing-trim 让连续中文标点做印刷级挤压（Chromium + 带 chws 的字体生效）。 */
+  text-autospace: normal;
+  text-spacing-trim: trim-start;
+  background: var(--color-bg);
+  color: var(--color-text-1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  /* iOS 安全区 + 触摸优化 */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  touch-action: manipulation;           /* 禁止双击缩放，消 300ms tap 延迟 */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── 日/夜切换：只在切换那一瞬给「所有」元素统一上一层颜色过渡 ──
+   历史坑：过去只有 body 挂 0.3s 过渡，卡片/边框/顶栏却瞬变，两者错峰 → 撕裂。
+   现在切换时由 JS 给 <html> 加 .theme-switching，让全体同步淡入；
+   切换完 ~0.32s 后撤掉，避免常驻 * 过渡拖慢 hover/卡片等日常交互。 */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease,
+    filter 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ── 字重分层工具类（保留类名，token 已指向无衬线家族；调用处可渐进清理） ── */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  /* 标题均衡断行 + 短语级换行（word-break:auto-phrase，中文标题在语义边界折行，Chromium） */
+  text-wrap: balance;
+  word-break: auto-phrase;
+}
+
+/* ── 面板材质：白底 + 细线 + 轻阴影（B 站卡片/弹窗风，去毛玻璃） ── */
+.glass-panel {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* 封面底部渐隐 meta 条（实测 B 站 stats 条） */
+.card-stats-mask {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 16px 8px 6px;
+}
+
+/* 链接与交互 */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  /* iOS: 禁止链接长按弹出菜单（"在新标签页打开"等），提高 App 感 */
+  -webkit-touch-callout: none;
+}
+
+/* iOS 滚动容器：强制 momentum 惯性（全局已开，这里给 overflow-x 容器兜底） */
+.ios-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* iOS 键盘出现时仍然稳住的底部固定元素（MobileTabBar、播放器底栏等）
+   用法：在 fixed bottom-0 的元素上加 .ios-safe-bottom */
+.ios-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ios-safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* iOS 输入框：字号 ≥16px 阻止聚焦自动缩放（<16px 会让 Safari 视口放大） */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* 触摸态反馈：iOS 没有 :hover，用 :active 给按钮一个瞬时高亮（原生感） */
+@media (hover: none) and (pointer: coarse) {
+  a:active,
+  button:active {
+    opacity: 0.7;
+    transition: none;
+  }
+
+  /* 卡片用 scale 做按压反馈，比透明度变化更直观 */
+  .card-lift:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 极简精致滚动条 */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    /* 终态必须是 none 而非 translateY(0)：animation both 会永久保留 to 帧，
+       非 none 的 transform 让容器劫持内部 fixed 元素的包含块（浮动按钮不跟视口的根因） */
+    transform: none;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 笔记编辑区：首行即标题（iPad 备忘录同款视觉），::first-line 加粗放大 */
+.notes-editor::first-line {
+  font-size: 1.35em;
+  font-weight: 700;
+}
+
+/* 视频封面/播放器上的字幕阴影（保留：watch overlay 文本用） */
+.text-shadow {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* 隐藏横向滚动条 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 栏目错峰入场 */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.19s; }
+.stagger-4 { animation-delay: 0.26s; }
+.stagger-5 { animation-delay: 0.33s; }
+
+/* 日间模式 logo 提亮一档（朱橙 #D9562F 在白底偏暗）；夜间恢复正常 */
+:not(.dark) img[src*="/logo/"] {
+  filter: brightness(1.12) saturate(1.08);
+}
+.dark img[src*="/logo/"] {
+  filter: none;
+}
+
+/* ── 全站动画工具类 ── */
+/* 路由切换统一入场（app/template.tsx 每次导航重挂载触发） */
+.page-enter {
+  animation: pageEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 锚定浮窗（人物卡/划词面板）入场：只淡入，不碰 transform——
+   否则 pageEnter 的 transform:none 会在动画结束后覆盖掉八方位翻转的 translate */
+@keyframes anchorPop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 卡片悬浮上浮 + 投影（网格/列表卡片通用） */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+/* 网格错峰入场：前 12 个子项依次浮现，其后（多半在首屏外）不再排队 */
+.grid-stagger > * { animation: fadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.grid-stagger > :nth-child(1) { animation-delay: 0.03s; }
+.grid-stagger > :nth-child(2) { animation-delay: 0.06s; }
+.grid-stagger > :nth-child(3) { animation-delay: 0.09s; }
+.grid-stagger > :nth-child(4) { animation-delay: 0.12s; }
+.grid-stagger > :nth-child(5) { animation-delay: 0.15s; }
+.grid-stagger > :nth-child(6) { animation-delay: 0.18s; }
+.grid-stagger > :nth-child(7) { animation-delay: 0.21s; }
+.grid-stagger > :nth-child(8) { animation-delay: 0.24s; }
+.grid-stagger > :nth-child(9) { animation-delay: 0.27s; }
+.grid-stagger > :nth-child(10) { animation-delay: 0.3s; }
+.grid-stagger > :nth-child(11) { animation-delay: 0.33s; }
+.grid-stagger > :nth-child(12) { animation-delay: 0.36s; }
+.grid-stagger > :nth-child(n+13) { animation: none; }
+
+/* ── 滚动驱动动画（Chrome 115+；不支持的浏览器自动退回普通入场动画） ── */
+@supports (animation-timeline: view()) {
+  /* 区块滑入视口时上浮显形，离开下边缘前保持稳定 */
+  .scroll-reveal {
+    animation: scrollReveal 1ms linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal { animation: none; }
+  }
+}
+
+@keyframes scrollReveal {
+  from {
+    opacity: 0;
+    transform: translateY(56px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    /* 同 fadeIn：终态用 none，避免容器永久携带 transform 劫持内部 fixed */
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── 剧院模式切换丝滑化 ──
+   1) 容器宽度/边距挂常驻过渡：!important 硬切的 max-width 也能滑过去（CSS 过渡兜底所有浏览器）
+   2) View Transition（watch 页切换按钮触发）：播放器盒子做几何 morph，其余整页交叉淡化 */
+.global-content-container,
+.main-content {
+  transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    gap 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-group(theater-player) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 播放器新旧快照不做交叉淡化（视频画面叠影会发糊），只留几何 morph */
+::view-transition-old(theater-player) {
+  display: none;
+}
+
+::view-transition-new(theater-player) {
+  animation: none;
+  height: 100%;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+/* ── EPUB 仿真滑动：旧页快照横滑出场（微信读书滑动翻页式） ── */
+@keyframes pageSlideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-104%); }
+}
+
+@keyframes pageSlideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(104%); }
+}
+
+/* ── 沉浸阅读模式（/reader/*，body.reader-immersive 由阅读器页挂载时加）──
+   顶栏/页脚/底部 tab 全收起 + 内容区去边距铺满，阅读器自带工具条负责导航 */
+body.reader-immersive header,
+body.reader-immersive footer,
+body.reader-immersive .top-spacer,
+body.reader-immersive .mobile-tabbar {
+  display: none !important;
+}
+
+body.reader-immersive .content-shell {
+  padding: 0 !important;
+}
+
+body.reader-immersive .global-content-container {
+  max-width: 100% !important;
+}
+
+body.reader-immersive .main-content {
+  padding-top: 0 !important;
+}
+
+/* ── 剧院模式 (Theater Mode) 全局覆盖 ── */
+body.theater-mode-active .global-content-container {
+  max-width: 1000px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  gap: 0 !important;
+}
+
+body.theater-mode-active .sidebar-wrapper {
+  display: none !important;
+}
+
+body.theater-mode-active .main-content {
+  padding-top: 1rem !important;
+  width: 100% !important;
+}
+
+/* 剧院模式下主内容区保持居中均衡 */
+body.theater-mode-active .theater-padding-compensate {
+  max-width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  body.theater-mode-active .theater-padding-compensate {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ── 核心：响应式全局放大缩放 (针对大屏自适应) ──
+ * Tailwind使用 rem，更改 html font-size 即等于将整个布局等比缩放。
+ */
+@media (min-width: 1280px) {
+  html {
+    font-size: 106.25%;
+  }
+}
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 118.75%;
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 125%;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 150%;
+  }
+}
+
+/* ── 播放器 UI 加固：不受日/夜模式影响 ── */
+.custom-dplayer-theme .dplayer-icons .dplayer-icon-content svg {
+  color: white !important;
+  fill: currentColor !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
+}
+
+/* hover 高亮：所有控制栏按钮统一主题橙。显式写 fill/stroke（specificity 高于下方
+ * 各注入按钮的 color/stroke 定制），避免任何按钮 hover 不变色 */
+.custom-dplayer-theme .dplayer-icons .dplayer-icon:hover .dplayer-icon-content svg {
+  color: var(--color-primary) !important;
+  fill: var(--color-primary) !important;
+  stroke: var(--color-primary) !important;
+}
+
+.custom-dplayer-theme .dplayer-notice {
+  border-radius: 8px !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+}
+
+.custom-dplayer-theme .dplayer-controller {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent) !important;
+}
+
+.custom-dplayer-theme .dplayer-bar-wrap .dplayer-bar .dplayer-loaded {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ── 播放器控制栏常显 + 功能按钮描边常显（spec 反馈：按钮 hover 才可见，需始终显示） ──
+ * 音轨 / 倍速 / 字幕样式齿轮 / 导入字幕 等注入按钮的描边 SVG 默认要清晰可见 */
+.custom-dplayer-theme .dplayer-controller,
+.custom-dplayer-theme .dplayer-controller.dplayer-controller-hide {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+/* 注入按钮常显；排除 DPlayer 原生字幕开关——它靠 opacity 明暗表达开/关状态，
+ * 一刀切 opacity:1 会把这个状态反馈杀掉 */
+.custom-dplayer-theme .dplayer-icon:not(.dplayer-subtitle-icon) .dplayer-icon-content { opacity: 1 !important; }
+.custom-dplayer-theme .dplayer-icons-right .dplayer-icon-content svg,
+.custom-dplayer-theme .dplayer-icons-left .dplayer-icon-content svg {
+  opacity: 1 !important;
+  color: #fff !important;
+}
+/* 注入的功能按钮 svg 给足尺寸 */
+.custom-dplayer-theme .dplayer-track-select-icon .dplayer-icon-content svg,
+.custom-dplayer-theme .dplayer-sub-settings-icon .dplayer-icon-content svg,
+.custom-dplayer-theme .dplayer-sub-upload-icon .dplayer-icon-content svg,
+.custom-dplayer-theme .dplayer-theater-icon .dplayer-icon-content svg {
+  width: 20px;
+  height: 20px;
+  opacity: 1 !important;
+  color: #fff !important;
+}
+/* 倍速/音轨按钮：通配规则的 fill: currentColor 把表盘填成白色实心后，
+ * 白色指针/音符细节隐形（"时钟没有指针"bug）——内部线条改黑色描边，白底黑线清晰 */
+.custom-dplayer-theme .dplayer-speed-icon .dplayer-icon-content svg,
+.custom-dplayer-theme .dplayer-audio-track-icon .dplayer-icon-content svg {
+  stroke: #000 !important;
+}
+
+/* ── 走马灯与动态信息流 (Marquee & Info Flow) ── */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.mask-image-scroll {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* ── /missed What You Missed：完成 ✓ 徽章弹出（scale 0→1.15→1 spring） ── */
+@keyframes missedCheckPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.missed-check-pop {
+  animation: missedCheckPop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── 书架「私人藏书阁」动效 ── */
+/* 书卡 3D 翻书 hover：容器给 perspective，封面本体绕 Y 轴微开 + 抬升 */
+.book3d {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+.group:hover .book3d {
+  transform: rotateY(-10deg) translateY(-5px);
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.28));
+}
+/* 入场浮现：进入视口后加 .in，延迟由 JS 按列号错开 */
+.reveal-item { opacity: 0; transform: translateY(14px); }
+.reveal-item.in {
+  opacity: 1; transform: none;
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* hero 环境光晕：封面模糊层缓慢漂移，像阳光在书页上移动 */
+@keyframes heroDrift {
+  from { transform: scale(1.25) translate(-2%, -3%); }
+  to { transform: scale(1.35) translate(2%, 3%); }
+}
+.hero-ambient { animation: heroDrift 26s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-item { opacity: 1; transform: none; }
+  .hero-ambient { animation: none; }
+  .book3d, .group:hover .book3d { transition: none; transform: none; }
+}
+
+/* ── 阅读器入场：全屏层从右侧滑入（盖住顶栏，真沉浸）──
+   层自己 fixed 全屏：EPUB(h-100dvh) 正好铺满；PDF 阅读器根是 fixed inset-0，
+   动画期间(transform≠none)其包含块=本层(全屏)，终态 transform:none 回视口，
+   两者尺寸一致 → 无跳变。overflow:auto 让 md 长文流照常滚动。 */
+.reader-slide-in {
+  position: fixed;
+  inset: 0;
+  z-index: 60;               /* 盖过顶栏(z-50)：阅读即沉浸 */
+  background: var(--color-bg);
+  overflow: auto;
+  padding-top: env(safe-area-inset-top);   /* fixed 层绕过 body 的 safe-area，这里自己补——顶栏别撞进 iOS 状态栏 */
+  animation: readerSlideIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* 返回书架：整层向右滑出（transform≠none 期间 PDF 的 fixed 跟层一起走） */
+.reader-slide-in.reader-slide-out {
+  animation: readerSlideOut 0.34s cubic-bezier(0.4, 0, 1, 1) both;
+}
+@keyframes readerSlideOut {
+  from { transform: none; }
+  to { transform: translateX(100%); box-shadow: -32px 0 64px rgba(0, 0, 0, 0.2); }
+}
+@keyframes readerSlideIn {
+  from { transform: translateX(100%); box-shadow: -32px 0 64px rgba(0, 0, 0, 0.35); }
+  to { transform: none; box-shadow: -32px 0 64px rgba(0, 0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reader-slide-in { animation: none; }
+}

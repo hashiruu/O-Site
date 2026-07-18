@@ -1,0 +1,12 @@
+<!doctype html><html><body style="margin:0;background:#000">
+<iframe id="f" style="width:100vw;height:100vh;border:0" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe>
+<script>
+fetch("/api/embed-proxy/fox-usa").then(r=>r.text()).then(html=>{
+  const blob = new Blob([html], {type:"text/html"});
+  document.getElementById("f").src = URL.createObjectURL(blob);
+  setTimeout(()=>{
+    try{const d=document.getElementById("f").contentDocument;document.title=d?d.title||"NO TITLE":"NO DOC";}
+    catch(e){document.title="ERR:"+e.message}
+  },3000);
+});
+</script></body></html>

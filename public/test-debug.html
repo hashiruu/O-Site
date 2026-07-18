@@ -1,0 +1,24 @@
+<!doctype html><html><body style="margin:0;background:#000;color:#0f0;font:14px monospace;padding:20px">
+<pre id="log"></pre>
+<iframe id="f" style="width:800px;height:600px;border:2px solid red" allow="autoplay" allowfullscreen></iframe>
+<script>
+const log = (s) => document.getElementById("log").textContent += s + "\n";
+log("FETCHING /api/embed-proxy/fox-usa ...");
+fetch("/api/embed-proxy/fox-usa")
+  .then(r => { log("STATUS: " + r.status + " type=" + r.headers.get("content-type")); return r.text(); })
+  .then(html => {
+    log("HTML LEN: " + html.length + " title=" + (html.match(/<title>([^<]*)<\/title>/)||["?","?"])[1]);
+    const blob = new Blob([html], {type:"text/html"});
+    const url = URL.createObjectURL(blob);
+    log("BLOB URL: " + url.slice(0,50));
+    document.getElementById("f").src = url;
+    setTimeout(() => {
+      try {
+        const d = document.getElementById("f").contentDocument;
+        log("IFRAME DOC: " + (d ? ("body=" + (d.body?.innerHTML?.length||0) + " title=" + d.title) : "NULL"));
+      } catch(e) { log("IFRAME ERR: " + e.message); }
+      log("IFRAME URL: " + document.getElementById("f").contentWindow?.location?.href?.slice(0,60));
+    }, 3000);
+  })
+  .catch(e => log("FETCH ERR: " + e.message));
+</script></body></html>
