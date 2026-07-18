@@ -130,6 +130,16 @@ const playTargetOf = (item: MediaItem) => {
 // 同源代理 + 服务器缓存后永远稳定可达
 const proxyImg = (u: string) => (/^https?:\/\//.test(u) ? `/api/discover/img?u=${encodeURIComponent(u)}` : u);
 
+/** 清洗媒体文件名：去分辨率后缀、去视频扩展名、下划线/连字符换空格 */
+function cleanTitle(s: string): string {
+    return s
+        .replace(/[-_]\d{3,4}p\d*/gi, "")   // -720p60 / -1080p / _1080p 等
+        .replace(/\.(mov|mp4|mkv|avi|wmv|flv|webm|m4v|ts|mts|rmvb)$/i, "") // 视频扩展名
+        .replace(/[-_]+/g, " ")              // 下划线/连字符换空格
+        .replace(/\s+/g, " ")               // 多余空格合并
+        .trim();
+}
+
 const thumbOf = (item: MediaItem) =>
     item.poster ? proxyImg(item.poster) : `/api/media/thumbnail?filePath=${encodeURIComponent(item.firstEpisodePath || item.path)}`;
 
@@ -354,7 +364,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                             text={(() => {
                                 const raw = aiGreet
                                     ? aiGreet.line
-                                    : `${t("今天想看点什么？")}${pool.length > 0 ? ` · ${pool.length}` : ""}`;
+                                    : t("今天想看点什么？");
                                 const txt = raw.trim();
                                 return /[。！？!?…”）)]$/.test(txt) ? txt : `${txt}。`; // 句末补句号
                             })()}
@@ -473,7 +483,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                                 {curR.rating ? <span className="hidden shrink-0 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] text-white/75 backdrop-blur sm:inline">★ {Number(curR.rating).toFixed(1)}</span> : null}
                             </span>
                             {curR.overview && (
-                                <span className="mt-1 line-clamp-1 block text-[12px] text-white/65 sm:line-clamp-2">{curR.overview}</span>
+                                <span className="mt-1 line-clamp-2 block text-[12px] text-white/65">{curR.overview}</span>
                             )}
                         </span>
                     </button>
@@ -518,7 +528,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                                     <span className="min-w-0 flex-1 truncate text-[13px] text-text-1 transition-colors group-hover:text-primary">
                                         {x.title}
                                     </span>
-                                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${x.kind === "电影" ? "bg-primary/10 text-primary" : x.kind === "书" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-secondary/10 text-secondary"}`}>{x.kind}</span>
+                                    <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] bg-text-3/8 text-text-3">{x.kind}</span>
                                 </button>
                             </li>
                         ))}
@@ -777,8 +787,8 @@ function GalleryRow({ no, title, items, onRefresh }: {
             {/* 背景巨型描边编号：杂志刊号感，纯装饰 */}
             <div
                 aria-hidden
-                className="pointer-events-none absolute -top-6 left-0 select-none font-display text-[96px] leading-none opacity-[0.07] sm:text-[128px]"
-                style={{ WebkitTextStroke: "2.5px var(--color-text-1)", color: "transparent" }}
+                className="pointer-events-none absolute -top-2 left-0 select-none font-display text-[40px] leading-none opacity-[0.07] sm:text-[56px]"
+                style={{ WebkitTextStroke: "1.5px var(--color-text-1)", color: "transparent" }}
             >
                 {no}
             </div>
@@ -800,7 +810,7 @@ function GalleryRow({ no, title, items, onRefresh }: {
                         <MediaCard
                             item={{
                                 id: item.id,
-                                title: item.title,
+                                title: cleanTitle(item.title),
                                 thumb: item.poster ? proxyImg(item.poster) : thumbOf(item),
                                 rating: item.rating,
                                 year: item.year,

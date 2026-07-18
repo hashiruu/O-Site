@@ -116,8 +116,8 @@ function DetailContent() {
                     ) : (
                         <div className="h-full w-full" style={{ background: "radial-gradient(90% 120% at 70% 0%, var(--color-accent-glow) 0%, transparent 60%)" }} />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-bg/10" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-bg/70 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-bg/20" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-bg/90 via-transparent to-transparent" />
                 </div>
 
                 <div className="relative mx-auto max-w-[1200px] px-0 pt-40 md:pt-52">
@@ -137,6 +137,10 @@ function DetailContent() {
 
                         {/* 右：信息区（标题压在 backdrop 下缘,自带投影保证可读） */}
                         <div className="flex min-w-0 flex-1 flex-col text-center sm:text-left">
+                            <button onClick={() => router.back()} className='mb-4 self-start flex items-center gap-1 text-[13px] text-text-3 transition-colors hover:text-text-1 cursor-pointer sm:mb-3'>
+                                <svg className='h-4 w-4' fill='none' stroke='currentColor' strokeWidth={2} viewBox='0 0 24 24'><path strokeLinecap='round' strokeLinejoin='round' d='M10 19l-7-7m0 0l7-7m-7 7h18' /></svg>
+                                返回
+                            </button>
                             <h1 className="mb-3 font-display text-[30px] leading-tight tracking-tight text-text-1 drop-shadow-sm md:mb-4 md:text-[40px]">
                                 {data.title}
                             </h1>
@@ -164,7 +168,7 @@ function DetailContent() {
                             </div>
 
                             {/* 简介：裸文字（去掉框中框），行首缩进呼吸感 */}
-                            <p className="mb-6 max-w-3xl text-[14px] leading-[1.9] text-text-2 line-clamp-4 sm:line-clamp-5 md:text-[15px]">
+                            <p className="mb-6 max-w-3xl text-[14px] leading-[1.9] text-text-2 line-clamp-2 md:text-[15px]">
                                 {data.overview || "暂无该影片的剧情简介。可在设置中配置 TMDB API 后触发扫描获取。"}
                             </p>
 
@@ -202,12 +206,6 @@ function DetailContent() {
                                 >
                                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                                     重新刮削
-                                </button>
-                                <button
-                                    onClick={() => router.back()}
-                                    className="cursor-pointer rounded-full px-3 py-2.5 text-[13px] text-text-3 transition-colors hover:text-text-1"
-                                >
-                                    ← 返回
                                 </button>
                             </div>
                         </div>

@@ -60,7 +60,8 @@ export function MediaCard({
             className="group block cursor-pointer rounded-md"
         >
             <div
-                className={`relative w-full overflow-hidden rounded-md bg-bg-input transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.14)] ${aspectClass}`}
+                className={`relative w-full overflow-hidden rounded-md transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.14)] ${aspectClass}`}
+                style={{ background: "linear-gradient(135deg, #1a1a2e, #16213e)" }}
             >
                 {variant === "landscape" ? (
                     <>
