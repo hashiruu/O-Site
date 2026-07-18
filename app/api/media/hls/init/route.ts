@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Forbidden — 需管理员授权" }, { status: 403 });
         }
 
-        // 省流量通道：mcvale.net 外网的受限用户强制完整转码（禁 remux 视频复制），输出锁 720p/30fps
+        // 省流量通道：公网入口的受限用户强制完整转码（禁 remux 视频复制），输出锁 720p/30fps
         const { isBandwidthLimited } = await import("@/lib/access");
         const limited = isBandwidthLimited(req, access);
         if (limited) remux = false;

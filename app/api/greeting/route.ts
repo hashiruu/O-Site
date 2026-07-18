@@ -9,7 +9,7 @@ import { recordUsage } from "@/lib/ai-usage";
 export const dynamic = "force-dynamic";
 
 // ── 个性化问候（首页左卡的"夜深了"升级版） ──
-// GET /api/greeting → { head: "夜深了", line: "外面下着小雨，《悖论13》才翻开几页，今晚接着读一点吧。" }
+// GET /api/greeting → { head: "夜深了", line: "外面下着小雨，那本书才翻开几页，今晚接着读一点吧。" }
 // 输入给 DeepSeek Flash：当下时间/星期 + 当地天气（open-meteo 免 key）+ 这位用户的书影足迹
 // （在读的书与进度 / 刚读完的书 / 最近在看的片），要求温情中文、像家人留的便条。
 // 缓存：每用户每 3 小时一条（时间段变了问候才该变）；guest / 无 key / 失败 → data:null，前端用默认问候。

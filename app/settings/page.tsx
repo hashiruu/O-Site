@@ -143,7 +143,7 @@ export default function SettingsPage() {
                                     type="text"
                                     value={liveAudioUrl}
                                     onChange={(e) => setLiveAudioUrl(e.target.value)}
-                                    placeholder="如 http://192.168.1.222:8000/live.m3u8 或 http://192.168.1.222:8000/audio"
+                                    placeholder="如 http://<局域网IP>:8000/live.m3u8"
                                     className="w-full max-w-md h-10 px-3 bg-bg-input border border-line rounded-md text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                 />
                                 <p className="text-xs text-text-3 mt-2">.m3u8 走 HLS 解码，其余按连续音频流直连。由本地 audio 元素承载，音量可控，替代嵌入播放器的跨域音频。</p>
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                                     type="text"
                                     value={liveDanmakuUrl}
                                     onChange={(e) => setLiveDanmakuUrl(e.target.value)}
-                                    placeholder="如 ws://192.168.1.222:9000 或 http://192.168.1.222:9000/danmaku"
+                                    placeholder="如 ws://<局域网IP>:9000"
                                     className="w-full max-w-md h-10 px-3 bg-bg-input border border-line rounded-md text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                 />
                                 <p className="text-xs text-text-3 mt-2">ws:// 走 WebSocket；http:// 自动识别 SSE 或轮询。每条建议含 text / color / type 字段。</p>

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
             return new NextResponse("Forbidden — 需管理员授权", { status: 403 });
         }
 
-        // --- 省流量通道：mcvale.net 外网的受限用户禁止直连视频原文件，必须走 HLS 转码（720p30）---
+        // --- 省流量通道：公网入口的受限用户禁止直连视频原文件，必须走 HLS 转码（720p30）---
         const VIDEO_EXT_RE = /\.(mp4|m4v|webm|mkv|avi|mov|wmv|flv|rmvb|ts|mts|m2ts)$/i;
         const { isBandwidthLimited } = await import("@/lib/access");
         if (isBandwidthLimited(request, access) && VIDEO_EXT_RE.test(filePath)) {

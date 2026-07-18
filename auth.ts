@@ -3,7 +3,7 @@
 //
 // AUTH_URL 不再硬编码（.env.local 已删此行）。
 // 由 middleware 在 /api/auth/* 路径上把真实入口域名注入 x-forwarded-host，
-// NextAuth v5 trustHost 模式据此自动生成正确回调 URL（tailscale / mcvale.net / 局域网各自对）。
+// NextAuth v5 trustHost 模式据此自动生成正确回调 URL（tailnet / 公网域名 / 局域网各自对）。
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { getRoleByEmail, upsertUserOnLogin } from "@/lib/roles";

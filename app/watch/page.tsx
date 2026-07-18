@@ -108,12 +108,13 @@ function WatchContent() {
     const autoDecidedForRef = useRef<string | null>(null);
     const hlsRemuxRef = useRef(false);
     const [decodeReason, setDecodeReason] = useState("");
-    // 省流量通道：mcvale.net 外网访问的受限用户只能走 HLS 转码（服务端同规则兜底，
+    // 省流量通道：公网入口访问的受限用户只能走 HLS 转码（服务端同规则兜底，
     // 直连 stream 会 403）。域名命中先置 true，/api/auth/me 确认 boss/admin 后解除。
     const limitedChannelRef = useRef(false);
     useEffect(() => {
         const host = window.location.hostname.toLowerCase();
-        if (host !== "mcvale.net" && !host.endsWith(".mcvale.net")) return;
+        const pub = (process.env.NEXT_PUBLIC_OSITE_PUBLIC_HOST || "").toLowerCase();
+        if (!pub || (host !== pub && !host.endsWith(`.${pub}`))) return;
         limitedChannelRef.current = true;
         fetch("/api/auth/me")
             .then((r) => r.json())

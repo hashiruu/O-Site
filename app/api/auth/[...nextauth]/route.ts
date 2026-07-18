@@ -4,7 +4,7 @@ import { handlers } from "@/auth";
 // Next 15 在 next start 下 request.url 是监听地址（localhost:3024），
 // Auth.js 据此拼回调 → 两个入口全被送去 localhost。
 // 修法：按请求真实来源（x-forwarded-host > host）重写 Request URL——
-// mcvale.net 进来的回 mcvale.net，tailscale 进来的回 ts.net，各回各家。
+// 从哪个域名进来就回哪个域名（公网域名 / tailnet / 局域网各回各家）。
 function rewriteOrigin(req: NextRequest): NextRequest {
     const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
     if (!host || host.startsWith("localhost") || host.startsWith("127.")) return req;
