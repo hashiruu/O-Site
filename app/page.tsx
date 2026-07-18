@@ -464,12 +464,6 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                 {/* 顶部压暗：主题徽章在任何海报上都读得清（z-[4]:压过图层与溶解层） */}
                 <div className="absolute inset-x-0 top-0 z-[4] h-20 bg-gradient-to-b from-black/45 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-[4] h-32 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-                {/* 左上角主题徽章：每天一个频道 */}
-                {curR?.theme && (
-                    <div className="absolute left-4 top-3.5 z-[5] rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[10px] font-semibold tracking-[0.22em] text-white/85 backdrop-blur-md">
-                        EVERYDAY DIFFERENT · {curR.theme}
-                    </div>
-                )}
                 {/* 左下：玻璃播放钮 + 片名（年份/评分做成胶片徽章）+ 两行简介 */}
                 {curR && (
                     <button onClick={curR.go} className="group/ban absolute bottom-3.5 left-4 right-4 z-[5] flex cursor-pointer items-center gap-3 text-left sm:right-24">
