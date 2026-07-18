@@ -477,7 +477,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                                 {curR.rating ? <span className="hidden shrink-0 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] text-white/75 backdrop-blur sm:inline">★ {Number(curR.rating).toFixed(1)}</span> : null}
                             </span>
                             {curR.overview && (
-                                <span className="mt-1 line-clamp-2 block text-[12px] text-white/65">{curR.overview}</span>
+                                <span className="mt-1 line-clamp-2 text-[12px] text-white/65">{curR.overview}</span>
                             )}
                         </span>
                     </button>
@@ -950,13 +950,13 @@ export default function Home() {
 
                     {/* ④ 分区长廊：两行并排（行1=01·02，行2=03·04），整体一个横向滚动同步滑 */}
                     <GalleryScroller>
-                        <div className="flex items-start gap-16">
+                        <div className="flex items-start gap-10">
                             {sections.slice(0, 2).map((sec, i) => (
                                 <GalleryRow key={sec.key} no={String(i + 1).padStart(2, "0")} title={sec.title}
                                     items={data[sec.key]} onRefresh={() => handleRefresh(sec.key)} />
                             ))}
                         </div>
-                        <div className="flex items-start gap-16">
+                        <div className="flex items-start gap-10">
                             {sections.slice(2, 4).map((sec, i) => (
                                 <GalleryRow key={sec.key} no={String(i + 3).padStart(2, "0")} title={sec.title}
                                     items={data[sec.key]} onRefresh={() => handleRefresh(sec.key)} />

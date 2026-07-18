@@ -692,7 +692,7 @@ export default function BookshelfPage() {
                                                 ) : (
                                                     <div className="flex h-full w-full items-center justify-center p-2 text-center text-[12px] text-text-3">{b.title}</div>
                                                 )}
-                                                <div className="absolute top-1 right-1 rounded-full border border-brand-cyan/70 bg-black/65 px-1.5 py-[2px] text-[9px] font-bold leading-none text-brand-cyan backdrop-blur-[2px]">{t('外站')}</div>
+                                                <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-brand-cyan/80" />
                                             </div>
                                             <div className="mt-1.5 line-clamp-2 text-[12.5px] font-medium leading-snug text-text-1 transition-colors group-hover/eb:text-primary">{b.title}</div>
                                             {b.rating ? <div className="text-[11px] text-text-3">★ {Number(b.rating).toFixed(1)}</div> : null}
