@@ -99,6 +99,7 @@ const DICT: Record<string, string> = {
     "这里还是空的": "Nothing here yet", "去首页看看": "Go browse",
     "影音与阅读的全部足迹，与首页「继续观看」同一本账。": "Every watch and read, same ledger as the home page.",
     "年前的今天": "years ago today",
+    "那年今日": "Years Ago Today",
     // ── 嵌入观看 ──
     "嵌入观看": "Embedded viewing", "去B站打开 ↗": "Open on Bilibili ↗",
     "收起播放器": "Collapse player",

@@ -388,6 +388,10 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                         href={`/travel?album=${encodeURIComponent(memory.album.name)}`}
                         className="mt-3 block rounded-2xl border border-line/80 bg-white/65 p-3 shadow-lg backdrop-blur-md dark:border-white/12 dark:bg-black/35 hover:border-primary/50 transition-colors"
                     >
+                        {/* 小标题 */}
+                        <div className="mb-2 text-[10px] font-semibold tracking-[0.24em] text-primary/80">
+                            {t("那年今日")}
+                        </div>
                         <div className="flex items-center gap-3">
                             {memory.album.poster && (
                                 // eslint-disable-next-line @next/next/no-img-element
