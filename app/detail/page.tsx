@@ -334,15 +334,7 @@ function DetailContent() {
                 </section>
             )}
 
-            {/* 电影额外简介区（如果上面没展示过剧集） */}
-            {data.type === 'movie' && !data.episodes?.length && data.overview && (
-                <section className="max-w-[1200px] mx-auto pt-8 pb-10">
-                    <h2 className="font-display mb-4 text-[22px] tracking-tight text-text-1">剧情简介</h2>
-                    <p className="text-text-2 leading-[1.8] text-sm md:text-[15px] max-w-3xl">
-                        {data.overview}
-                    </p>
-                </section>
-            )}
+            {/* 简介唯一出处是 hero（可展开/收起），不再重复整块（Kimi 终审 P0） */}
 
             {/* 演职员横滑（metadata 含 cast 才渲染；兼容旧字符串数组和新对象数组） */}
             {(() => {
