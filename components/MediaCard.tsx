@@ -106,7 +106,7 @@ export function MediaCard({
 
                 {/* 右下角角标：时长 / 集数（黑 60% 底白字 12px） */}
                 {badge && (
-                    <div className="absolute bottom-1.5 right-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[12px] leading-none text-white">
+                    <div className="absolute bottom-1.5 right-1.5 max-w-[80%] truncate rounded bg-black/60 px-1.5 py-0.5 text-[12px] leading-none text-white">
                         {badge}
                     </div>
                 )}
@@ -138,7 +138,7 @@ export function MediaCard({
                     {item.title}
                 </h3>
                 {meta && (
-                    <div className="mt-1 line-clamp-1 text-[13px] text-text-3">{meta}</div>
+                    <div className="mt-1 truncate text-[13px] text-text-3">{meta}</div>
                 )}
             </div>
         </Link>
