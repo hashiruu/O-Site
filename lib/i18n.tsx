@@ -43,6 +43,7 @@ const DICT: Record<string, string> = {
     "全部记录 →": "All records →", "命运抽取中…": "Drawing your fate…",
     "就看它 →": "Watch it →", "算了": "Never mind",
     "电视剧": "TV Series", "旅行相册": "Travel albums",
+    "即将看完": "Almost done", "补片": "Missed",
     // ── 分区/详情 ──
     "电影大片": "Movies", "人气连续剧": "Series", "番剧动画": "Anime",
     "私密典藏": "Private", "部收录": "collected", "部外站": "external",

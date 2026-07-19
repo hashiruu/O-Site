@@ -283,7 +283,7 @@ function SkeletonGrid() {
 }
 
 export default function MissedPage() {
-    const { t } = useLang();
+    const { t, lang } = useLang();
     const me = useMe();
     const [items, setItems] = useState<MissedItem[]>([]);
     const [sources, setSources] = useState<SourceResult[] | null>(null);
@@ -371,7 +371,7 @@ export default function MissedPage() {
         <div className="w-full pb-16">
             {/* ── 页头 ── */}
             <PageHeader
-                title="What You Missed"
+                title={lang === 'en' ? 'What You Missed' : '补片'}
                 description={t("热点补课清单 · 标记你看过了没")}
                 actions={
                     <>

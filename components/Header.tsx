@@ -19,7 +19,7 @@ const CHANNELS = [
     { href: "/sports", label: "体育" },
     { href: "/bookshelf", label: "书架" },
     { href: "/notes", label: "笔记" },
-    { href: "/missed", label: "Missed" },
+    { href: "/missed", label: "补片" },
     { href: "/forum", label: "讨论组" },
 ];
 

@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
                             rating: null,
                             progressPct: Math.round(b.percent),
                             episodeLabel: null,
+                            remainingSec: null,
                         },
                     });
                 }
@@ -104,6 +105,7 @@ export async function GET(req: NextRequest) {
                     rating: r.rating,
                     progressPct: pct,
                     episodeLabel,
+                    remainingSec: r.duration > 0 ? Math.round(r.duration - r.position) : null,
                 },
             };
         });

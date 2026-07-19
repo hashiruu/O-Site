@@ -5,10 +5,10 @@ import pkg from "../package.json";
 
 const LINKS: { href: string; label: string }[] = [
     { href: "/", label: "首页" },
+    { href: "/category/movie", label: "电影" },
+    { href: "/category/series", label: "剧集" },
     { href: "/bookshelf", label: "书架" },
-    { href: "/missed", label: "Missed" },
-    { href: "/live", label: "直播" },
-    { href: "/sports", label: "体育" },
+    { href: "/category/travel", label: "旅行" },
     { href: "/about", label: "关于" },
 ];
 

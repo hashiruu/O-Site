@@ -101,6 +101,7 @@ interface ContinueItem {
     rating?: number | null;
     progressPct: number;
     episodeLabel: string | null;
+    remainingSec?: number | null;
 }
 
 interface LatestData {
@@ -421,7 +422,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                                                 <button
                                                     key={i}
                                                     onClick={() => setActive(i)}
-                                                    className={`cursor-pointer rounded-full transition-all ${i === idx ? "h-1 w-5 bg-text-1 dark:bg-white" : "h-1 w-2.5 bg-text-1/30 hover:bg-text-1/60 dark:bg-white/40 dark:hover:bg-white/70"}`}
+                                                    className={`cursor-pointer rounded-full transition-all duration-300 ${i === idx ? 'w-4 h-1.5 bg-text-1/70 dark:bg-white/90' : 'w-1.5 h-1.5 bg-text-1/30 hover:bg-text-1/50 dark:bg-white/40 dark:hover:bg-white/60'}`}
                                                     aria-label={`第 ${i + 1} 张`}
                                                 />
                                             ))}
@@ -489,7 +490,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                             <button
                                 key={i}
                                 onClick={() => setActiveR(i)}
-                                className={`cursor-pointer rounded-full transition-all ${i === idxR ? "h-1 w-6 bg-white" : "h-1 w-3 bg-white/40 hover:bg-white/70"}`}
+                                className={`cursor-pointer rounded-full transition-all duration-300 ${i === idxR ? 'w-4 h-1.5 bg-white/90' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'}`}
                                 aria-label={`第 ${i + 1} 张`}
                             />
                         ))}
@@ -635,7 +636,7 @@ function LuckyDraw({ pool, onClose }: { pool: MediaItem[]; onClose: () => void }
 function DeckRow({ continueItems, allPool }: {
     continueItems: ContinueItem[]; allPool: MediaItem[];
 }) {
-    const { t: t2 } = useLang();
+    const { t: t2, lang: lang2 } = useLang();
     const cw = continueItems.find((i) => i.type !== "book") || continueItems[0] || null;
     const book = continueItems.find((i) => i.type === "book") || null;
     const [drawing, setDrawing] = useState(false);
@@ -673,7 +674,18 @@ function DeckRow({ continueItems, allPool }: {
                     <Card
                         href={cw.type === "book" ? `/reader/epub?path=${encodeURIComponent(cw.path)}` : `/watch?filePath=${encodeURIComponent(cw.path)}`}
                         tag={t2("接着看")} title={cw.title}
-                        sub={`${cw.episodeLabel ? `看到 ${cw.episodeLabel} · ` : ""}${cw.progressPct}%`}
+                        sub={(() => {
+                            const rem = cw.remainingSec != null && cw.remainingSec > 0
+                                ? (cw.remainingSec < 60
+                                    ? t2('即将看完')
+                                    : lang2 === 'en'
+                                        ? `${Math.ceil(cw.remainingSec / 60)} min left`
+                                        : `还剩 ${Math.ceil(cw.remainingSec / 60)} 分钟`)
+                                : null;
+                            const epPart = cw.episodeLabel ? `看到 ${cw.episodeLabel}` : null;
+                            const parts = [epPart, rem ?? `${cw.progressPct}%`].filter(Boolean);
+                            return parts.join(' · ');
+                        })()}
                         thumb={cw.poster ? proxyImg(cw.poster) : `/api/media/thumbnail?filePath=${encodeURIComponent(cw.path)}`}
                     />
                 )}
@@ -716,7 +728,7 @@ function GalleryScroller({ children }: { children: React.ReactNode }) {
    竖版就竖版（有正式海报/书封 2:3）、横版就横版（截帧缩略 16:9），不强行转化。
    封面统一高度、宽度各按天生比例；一行放得下几张放几张，超出裁掉 + 右缘渐隐。 */
 function ContinueRow({ items }: { items: ContinueItem[] }) {
-    const { t } = useLang();
+    const { t, lang } = useLang();
     if (items.length === 0) return null;
     return (
         <section>
@@ -751,9 +763,19 @@ function ContinueRow({ items }: { items: ContinueItem[] }) {
                                 meta={
                                     isBook
                                         ? `已读 ${item.progressPct}%`
-                                        : item.episodeLabel
-                                            ? `${item.episodeLabel} · ${item.progressPct}%`
-                                            : `已看 ${item.progressPct}%`
+                                        : (() => {
+                                            const rem = item.remainingSec != null && item.remainingSec > 0
+                                                ? (item.remainingSec < 60
+                                                    ? t('即将看完')
+                                                    : lang === 'en'
+                                                        ? `${Math.ceil(item.remainingSec / 60)} min left`
+                                                        : `还剩 ${Math.ceil(item.remainingSec / 60)} 分钟`)
+                                                : null;
+                                            if (item.episodeLabel && rem) return `${item.episodeLabel} · ${rem}`;
+                                            if (item.episodeLabel) return `${item.episodeLabel} · ${item.progressPct}%`;
+                                            if (rem) return rem;
+                                            return `已看 ${item.progressPct}%`;
+                                        })()
                                 }
                             />
                         </div>

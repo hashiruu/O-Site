@@ -24,7 +24,7 @@ export function BackToTop() {
         <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label={t("回到顶部")}
-            className={`fixed bottom-20 right-4 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-line bg-bg-card/90 text-text-2 shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:text-primary md:bottom-8 md:right-6 ${
+            className={`fixed bottom-20 right-4 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-line bg-bg-card/90 text-text-2 shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:text-primary md:bottom-24 md:right-6 ${
                 show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
             }`}
         >

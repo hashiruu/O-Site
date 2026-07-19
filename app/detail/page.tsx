@@ -1,7 +1,8 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import { Suspense, useEffect, useState } from "react";
 import { BiliComments } from "../../components/BiliComments";
 
 // 外链图统一走同源代理(TMDB 直链在部分网络/Chrome 下偶发加载失败,首页同款铁律)
@@ -352,14 +353,6 @@ function DetailContent() {
                     castList.map((c: any) => typeof c === 'string' ? {name: c, character: '', profile_path: null} : c);
                 return (
                     <section className='max-w-[1200px] mx-auto pt-2 pb-6'>
-                        {meta?.genres?.length > 0 && (
-                            <div className='mb-4'>
-                                <span className='text-[13px] text-text-3 mr-2'>类型</span>
-                                {meta.genres.map((g: string) => (
-                                    <span key={g} className='inline-block mr-2 mb-1 px-2.5 py-0.5 rounded border border-line/60 text-text-2 text-[12px]'>{g}</span>
-                                ))}
-                            </div>
-                        )}
                         {(persons.length > 0 || meta?.director) && (
                             <>
                                 <div className='flex items-center justify-between mb-4'>
@@ -407,11 +400,10 @@ function DetailContent() {
                     <h2 className='font-display mb-5 text-[20px] tracking-tight text-text-1 md:text-[22px]'>相似内容</h2>
                     <div className='flex gap-4 overflow-x-auto pb-3' style={{scrollbarWidth: 'none'}}>
                         {similarItems.map((item: any) => {
-                            const href = '/detail?id=' + item.id;
                             return (
-                                <a
+                                <Link
                                     key={item.id}
-                                    href={href}
+                                    href={'/detail?id=' + item.id}
                                     className='flex-shrink-0 w-[130px] group cursor-pointer'
                                 >
                                     <div className='aspect-[2/3] rounded-md overflow-hidden bg-bg-input mb-2 transition-transform duration-200 group-hover:-translate-y-1'>
@@ -422,7 +414,10 @@ function DetailContent() {
                                                 alt={item.title}
                                                 className='w-full h-full object-cover'
                                                 loading='lazy'
-                                                onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                                                onError={(e) => {
+                                                    const card = (e.target as HTMLImageElement).closest('a');
+                                                    if (card) (card as HTMLElement).style.display = 'none';
+                                                }}
                                             />
                                         ) : (
                                             <div className='w-full h-full flex items-center justify-center text-text-4 text-[11px]'>无封面</div>
@@ -430,7 +425,7 @@ function DetailContent() {
                                     </div>
                                     <p className='text-[13px] text-text-1 line-clamp-2 group-hover:text-primary transition-colors'>{item.title}</p>
                                     {item.year && <p className='text-[12px] text-text-3 mt-0.5'>{item.year}</p>}
-                                </a>
+                                </Link>
                             );
                         })}
                     </div>
