@@ -10,6 +10,19 @@ import { useLang } from "../../../lib/i18n";
 
 function PlayIcon() { return <svg className="w-[12px] h-[12px]" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>; }
 
+// 解析相册年份：从 "26.6-31.5" 提取 2026
+function parseAlbumYear(date: string): number | null {
+    try {
+        const part = date.split("-")[0]; // "26.6"
+        const yyStr = part.split(".")[0]; // "26"
+        const n = parseInt(yyStr, 10);
+        if (isNaN(n)) return null;
+        if (n >= 0 && n < 100) return 2000 + n;
+        if (n >= 2000) return n;
+        return null;
+    } catch { return null; }
+}
+
 const typeLabels: Record<string, string> = {
     movie: "电影大片",
     series: "人气连续剧",
@@ -21,7 +34,7 @@ const typeLabels: Record<string, string> = {
 export default function CategoryPage({ params }: { params: Promise<{ type: string }> }) {
     const router = useRouter();
     const { type } = use(params);
-    const { t } = useLang();
+    const { t, lang } = useLang();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     // Fetch out：外站条目（第三态）+ 随机添加问卷 + 跳转菜单
@@ -230,19 +243,143 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                     }
                 />
 
-                {loading ? (
-                    <div className="text-center py-20 text-text-3">正在拉取频道数据...</div>
-                ) : items.length === 0 && extItems.length === 0 ? (
-                    <div className="text-center py-20">
-                        <p className="text-text-3 mb-2">该频道尚无收录内容或等待扫描</p>
-                        <div className="flex items-center justify-center gap-4">
-                            <button onClick={() => router.push('/admin')} className="text-primary hover:underline text-sm">前往控制台添加映射</button>
-                            {canFetchOut && isAdmin && <button onClick={() => setQuizOpen(true)} className="text-primary hover:underline text-sm">＋随机添加外站内容</button>}
-                        </div>
-                    </div>
-                ) : (
-                    <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-4 gap-y-6 sm:gap-x-5 sm:gap-y-8 grid-stagger">
+                {(() => {
+                    // 旅行相册年份分组计算
+                    const travelGroups: Array<{ year: number | "earlier"; items: typeof sortedItems }> = [];
+                    if (type === "travel") {
+                        const map = new Map<number | "earlier", typeof sortedItems>();
+                        for (const item of sortedItems) {
+                            const y = parseAlbumYear(item.date || "");
+                            const key: number | "earlier" = y !== null ? y : "earlier";
+                            if (!map.has(key)) map.set(key, []);
+                            map.get(key)!.push(item);
+                        }
+                        const yearKeys = [...map.keys()]
+                            .filter((k): k is number => typeof k === "number")
+                            .sort((a, b) => b - a);
+                        for (const k of yearKeys) travelGroups.push({ year: k, items: map.get(k)! });
+                        if (map.has("earlier")) travelGroups.push({ year: "earlier", items: map.get("earlier")! });
+                    }
+
+                    if (loading) {
+                        return <div className="text-center py-20 text-text-3">正在拉取频道数据...</div>;
+                    }
+                    if (items.length === 0 && extItems.length === 0) {
+                        return (
+                            <div className="text-center py-20">
+                                <p className="text-text-3 mb-2">该频道尚无收录内容或等待扫描</p>
+                                <div className="flex items-center justify-center gap-4">
+                                    <button onClick={() => router.push('/admin')} className="text-primary hover:underline text-sm">前往控制台添加映射</button>
+                                    {canFetchOut && isAdmin && <button onClick={() => setQuizOpen(true)} className="text-primary hover:underline text-sm">＋随机添加外站内容</button>}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    // 正常渲染
+                    return type === "travel" ? (
+                        <>
+                        {travelGroups.map((group) => { return (
+                            <div key={String(group.year)}>
+                                <h2 className="font-display text-[32px] font-bold tracking-tight text-text-1 mb-4 mt-8 first:mt-0">
+                                    {group.year === "earlier" ? (lang === "en" ? "Earlier" : "更早") : String(group.year)}
+                                </h2>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-4 gap-y-6 sm:gap-x-5 sm:gap-y-8 grid-stagger">
+                                                {/* ＋随机添加：问 3 个口味问题，自动补 10 部不重复的高人气外站内容（仅管理员） */}
+                                                {canFetchOut && isAdmin && (
+                                                    <button
+                                                        onClick={() => setQuizOpen(true)}
+                                                        className="group flex cursor-pointer flex-col rounded-xl text-left"
+                                                    >
+                                                        <div className="relative flex aspect-[2/3] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-bg-input/50 transition-all duration-250 group-hover:-translate-y-1 group-hover:border-primary/60">
+                                                            <svg className="h-9 w-9 fill-text-3 transition-colors group-hover:fill-primary" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
+                                                            <span className="text-[13px] font-medium text-text-3 transition-colors group-hover:text-primary">{t("随机添加")}</span>
+                                                            <span className="px-4 text-center text-[11px] leading-relaxed text-text-4">按你的口味补 10 部<br />本站没有就跳外站看</span>
+                                                        </div>
+                                                    </button>
+                                                )}
+                                                {group.items.slice(0, visibleCount).map((item) => {
+                                                    // 判断是否为需要展示长海报/进详情页的类型
+                                                    const isCinemaType = true; // always true in travel branch
+                                                    // 封面逻辑：优先使用 TMDB 海报，其次使用第一集截图，最后使用文件自身截图
+                                                    const thumbnailPath = item.poster || `/api/media/thumbnail?filePath=${encodeURIComponent(item.firstEpisodePath || item.path)}`;
+                                                    // 点击跳转路由
+                                                    const targetRoute = type === "travel" ? `/travel?album=${encodeURIComponent(item.name)}` : isCinemaType ? `/detail?id=${item.id}` : `/watch?filePath=${encodeURIComponent(item.path)}`;
+                                                    return (
+                                                        <div key={item.id} onClick={() => router.push(targetRoute)} className="group cursor-pointer flex flex-col rounded-xl" style={{ contentVisibility: "auto", containIntrinsicSize: "auto 320px" }}>
+                                                            <div className={`relative w-full rounded-xl overflow-hidden bg-bg-input border border-transparent group-hover:border-primary/50 transition-[transform,border-color,box-shadow] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.14)] shadow-sm ${isCinemaType ? 'aspect-[2/3]' : 'aspect-video'}`}>
+                                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                <img
+                                                                    src={thumbnailPath}
+                                                                    alt={item.title}
+                                                                    className="w-full h-full object-cover relative z-10 transition-transform duration-300 group-hover:brightness-105"
+                                                                    loading="lazy"
+                                                                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2YzZjQ2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48L3N2Zz4='; }}
+                                                                />
+                                                                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/60 to-transparent z-20 pointer-events-none" />
+                                                                <div className="absolute bottom-1.5 left-2 flex items-center text-white text-[12px] opacity-90 z-20">
+                                                                    <PlayIcon />
+                                                                </div>
+                                                                {/* 剧集数量标签 */}
+                                                                {item.episodeCount > 0 && (
+                                                                    <div className="absolute top-1.5 right-1.5 bg-black/70 text-white text-[11px] px-1.5 py-0.5 rounded z-20 font-medium">
+                                                                        {item.episodeCount}集
+                                                                    </div>
+                                                                )}
+                                                                {/* 未收录角标：剧集/动漫库里有条目但一集都没有（点进去没内容）。胶囊形（两端半圆）横排 */}
+                                                                {(false) && !item.episodeCount && (
+                                                                    <div className="absolute top-1.5 right-1.5 rounded-full bg-black/65 backdrop-blur-[2px] border border-bili-pink/70 text-bili-pink text-[10px] font-bold px-2.5 py-[3px] leading-none whitespace-nowrap z-20"
+                                                                        title="该剧集尚未收录任何分集">
+                                                                        未收录
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="mt-2.5 px-1">
+                                                                <h3 className="text-[14px] sm:text-[15px] font-medium text-text-1 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{item.title}</h3>
+                                                                <div className="text-[11px] text-text-3 mt-1 truncate">
+                                                                    {type === "travel" ? `${item.date || ""} · ${item.episodeCount || 0}项素材` :
+                                                                        sortBy === "ext" ? (item.path.match(/\.([^.]+)$/) ? item.path.match(/\.([^.]+)$/)[1].toUpperCase() : '文件夹') :
+                                                                        sortBy === "date" ? new Date(item.created_at).toLocaleDateString() : ''}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                                {/* 外站条目（第三态）：没有本地文件，点击弹 fetch-out 菜单跳合法平台 */}
+                                                {visibleCount >= group.items.length && extItems.map((item) => (
+                                                    <div key={item.id} onClick={(e) => setFoItem({ title: item.title, overview: item.overview, x: e.clientX, y: e.clientY })} className="group cursor-pointer flex flex-col rounded-xl relative">
+                                                        <div className="relative w-full rounded-xl overflow-hidden bg-bg-input border border-transparent group-hover:border-brand-cyan/60 transition-[transform,border-color,box-shadow] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.14)] shadow-sm aspect-[2/3]">
+                                                            {item.poster ? (
+                                                                <img src={item.poster} alt={item.title} loading="lazy" className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="flex h-full w-full items-center justify-center p-3 text-center text-[13px] text-text-3">{item.title}</div>
+                                                            )}
+                                                            <div className="absolute top-1.5 right-1.5 rounded-full bg-black/65 backdrop-blur-[2px] border border-brand-cyan/70 text-brand-cyan text-[10px] font-bold px-2.5 py-[3px] leading-none whitespace-nowrap z-20" title="外部站点资源，点击选择平台观看">
+                                                                {t("外站")}
+                                                            </div>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); void removeExternal(item.id); }}
+                                                                aria-label="移除"
+                                                                className="absolute left-1.5 top-1.5 z-20 hidden h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60 text-[13px] text-white/85 hover:bg-black/80 group-hover:flex"
+                                                            >×</button>
+                                                        </div>
+                                                        <div className="mt-2.5 px-1">
+                                                            <h3 className="text-[14px] sm:text-[15px] font-medium text-text-1 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{item.title}</h3>
+                                                            <div className="text-[11px] text-text-3 mt-1 truncate">{item.year || ""}{item.rating ? ` · ★ ${Number(item.rating).toFixed(1)}` : ""}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {visibleCount < group.items.length && (
+                                                <div ref={sentinelRef} className="py-8 text-center text-text-3 text-sm">加载中…</div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </>
+                        ) : (
+                        <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-4 gap-y-6 sm:gap-x-5 sm:gap-y-8 grid-stagger">
                         {/* ＋随机添加：问 3 个口味问题，自动补 10 部不重复的高人气外站内容（仅管理员） */}
                         {canFetchOut && isAdmin && (
                             <button
@@ -311,7 +448,6 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                             <div key={item.id} onClick={(e) => setFoItem({ title: item.title, overview: item.overview, x: e.clientX, y: e.clientY })} className="group cursor-pointer flex flex-col rounded-xl relative">
                                 <div className="relative w-full rounded-xl overflow-hidden bg-bg-input border border-transparent group-hover:border-brand-cyan/60 transition-[transform,border-color,box-shadow] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.14)] shadow-sm aspect-[2/3]">
                                     {item.poster ? (
-                                        /* eslint-disable-next-line @next/next/no-img-element */
                                         <img src={item.poster} alt={item.title} loading="lazy" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center p-3 text-center text-[13px] text-text-3">{item.title}</div>
@@ -323,7 +459,7 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                                         onClick={(e) => { e.stopPropagation(); void removeExternal(item.id); }}
                                         aria-label="移除"
                                         className="absolute left-1.5 top-1.5 z-20 hidden h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60 text-[13px] text-white/85 hover:bg-black/80 group-hover:flex"
-                                    >×</button>
+                                    >&#10005;</button>
                                 </div>
                                 <div className="mt-2.5 px-1">
                                     <h3 className="text-[14px] sm:text-[15px] font-medium text-text-1 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{item.title}</h3>
@@ -336,7 +472,8 @@ export default function CategoryPage({ params }: { params: Promise<{ type: strin
                         <div ref={sentinelRef} className="py-8 text-center text-text-3 text-sm">加载中…</div>
                     )}
                     </>
-                )}
+                );
+                })()}
             </div>
         </div>
     );

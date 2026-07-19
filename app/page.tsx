@@ -245,12 +245,21 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
     const [hotFo, setHotFo] = useState<{ title: string; kind: string; overview?: string; x: number; y: number } | null>(null);
     // AI 个性化问候（DeepSeek：时间+天气+书影足迹 → 温情便条）；拉不到用默认时间问候
     const [aiGreet, setAiGreet] = useState<{ head: string; line: string } | null>(null);
+    // 那年今日回忆卡
+    const [memory, setMemory] = useState<{ album: { name: string; title: string; date: string; poster: string; year: number }; yearsAgo: number } | null>(null);
 
     useEffect(() => {
         fetch(`/api/greeting?lang=${typeof window !== "undefined" && localStorage.getItem("lang") === "en" ? "en" : "zh"}`)
             .then((r) => r.json())
             .then((d) => { if (d.success && d.data?.head && d.data?.line) setAiGreet(d.data); })
             .catch(() => { /* 静默回落 */ });
+    }, []);
+
+    useEffect(() => {
+        fetch("/api/media/memories")
+            .then((r) => r.json())
+            .then((d) => { if (d.success && d.data) setMemory(d.data); })
+            .catch(() => { /* noop */ });
     }, []);
 
     useEffect(() => {
@@ -318,7 +327,7 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
         return () => clearInterval(t);
     }, [pausedR, rightItems.length]);
 
-    const { t } = useLang();
+    const { t, lang } = useLang();
     const idx = heroItems.length === 0 ? 0 : Math.min(active, heroItems.length - 1);
     const current = heroItems[idx] || null;
     const idxR = rightItems.length === 0 ? 0 : Math.min(activeR, rightItems.length - 1);
@@ -372,6 +381,34 @@ function StarHero({ heroItems, pool }: { heroItems: MediaItem[]; pool: MediaItem
                         />
                     </div>
                 </div>
+
+                {/* 那年今日回忆卡 */}
+                {memory && (
+                    <a
+                        href={`/travel?album=${encodeURIComponent(memory.album.name)}`}
+                        className="mt-3 block rounded-2xl border border-line/80 bg-white/65 p-3 shadow-lg backdrop-blur-md dark:border-white/12 dark:bg-black/35 hover:border-primary/50 transition-colors"
+                    >
+                        <div className="flex items-center gap-3">
+                            {memory.album.poster && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={memory.album.poster}
+                                    alt={memory.album.title}
+                                    className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                />
+                            )}
+                            <div>
+                                <div className="text-[10px] font-semibold tracking-[0.22em] text-text-3 dark:text-white/50">
+                                    {lang === 'en'
+                                        ? `${memory.yearsAgo} ${memory.yearsAgo === 1 ? 'year' : 'years'} ago today`
+                                        : `${memory.yearsAgo} 年前的今天`}
+                                </div>
+                                <div className="mt-0.5 font-display text-[15px] tracking-tight text-text-1 dark:text-white">{memory.album.title}</div>
+                            </div>
+                        </div>
+                    </a>
+                )}
 
                 {/* 左下：今日头条浮卡（轮播控制） */}
                 {current && (

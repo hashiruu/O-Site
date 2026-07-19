@@ -91,6 +91,14 @@ export async function GET(req: NextRequest) {
         }).format(now);
         const facts: string[] = [`现在：${timeStr}`];
         if (weather) facts.push(`天气：${weather}`);
+
+        // 周五 18:00 后：提示家庭电影夜氛围
+        const isFriEvening = (() => {
+            const weekday = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short' }).format(now);
+            const hour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false }).format(now), 10);
+            return weekday === 'Fri' && hour >= 18;
+        })();
+        if (isFriEvening) facts.push("今晚是周五晚——适合家庭电影夜");
         if (reading.length) {
             facts.push("最近的阅读记录（从新到旧）：" + reading.map((r) =>
                 `《${r.title}》${r.percent >= 98 ? "已读完" : `读到 ${Math.round(r.percent)}%`}（${r.updated_at.slice(5, 10)}）`
