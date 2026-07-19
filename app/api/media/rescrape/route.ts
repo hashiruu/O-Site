@@ -73,8 +73,13 @@ export async function POST(req: NextRequest) {
         const year = yearStr ? parseInt(yearStr) : null;
         const rating = d.vote_average ?? null;
         const genres = (d.genres || []).map((g: any) => g.name);
-        const cast = (d.credits?.cast || []).slice(0, 8).map((c: any) => c.name);
-        const metadata = JSON.stringify({ tmdbId: d.id, mediaType, genres, cast });
+        const castRaw = (d.credits?.cast || []).slice(0, 10).map((c: any) => ({
+            name: c.name as string,
+            character: (c.character as string) || '',
+            profile_path: c.profile_path ? ('https://image.tmdb.org/t/p/w185' + c.profile_path) : null,
+        }));
+        const director = (d.credits?.crew || []).find((c: any) => c.job === 'Director')?.name as string | undefined || null;
+        const metadata = JSON.stringify({ tmdbId: d.id, mediaType, genres, cast: castRaw, director });
 
         const db = getDb();
         const existing = db.prepare("SELECT id FROM media WHERE id = ?").get(mediaId);
@@ -86,7 +91,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            data: { poster, backdrop, overview, year, rating, genres, cast, metadata },
+            data: { poster, backdrop, overview, year, rating, genres, cast: castRaw, director, metadata },
         });
     } catch (e: any) {
         console.error("Rescrape POST error:", e);

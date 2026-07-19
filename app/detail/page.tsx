@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { BiliComments } from "../../components/BiliComments";
 
 // 外链图统一走同源代理(TMDB 直链在部分网络/Chrome 下偶发加载失败,首页同款铁律)
@@ -20,6 +20,8 @@ function DetailContent() {
     const [candidates, setCandidates] = useState<any[]>([]);
     const [rescrapeLoading, setRescrapeLoading] = useState(false);
     const [rescraping, setRescraping] = useState(false);
+    const [showFullOverview, setShowFullOverview] = useState(false);
+    const [similarItems, setSimilarItems] = useState<any[]>([]);
 
     useEffect(() => {
         if (!id) return;
@@ -41,6 +43,15 @@ function DetailContent() {
             .finally(() => { if (!ac.signal.aborted) setLoading(false); });
         return () => ac.abort();
     }, [id]);
+
+    useEffect(() => {
+        if (!data?.path) return;
+        setSimilarItems([]);
+        fetch('/api/media/recommend?context=' + encodeURIComponent(data.path) + '&exclude=' + encodeURIComponent(data.path) + '&limit=12')
+            .then(r => r.json())
+            .then(j => { if (j.success && Array.isArray(j.data)) setSimilarItems(j.data); })
+            .catch(() => {});
+    }, [data?.path]);
 
     if (loading) {
         return (
@@ -65,6 +76,14 @@ function DetailContent() {
 
     const seasons = data.episodes ? Array.from(new Set(data.episodes.map((e: any) => e.season))).sort((a: any, b: any) => a - b) as number[] : [];
     const currentEpisodes = data.episodes ? data.episodes.filter((e: any) => e.season === activeSeason).sort((a: any, b: any) => a.episode - b.episode) : [];
+
+    const formatDuration = (seconds: number): string => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        if (h > 0) return h + '小时' + (m > 0 ? m + '分' : '');
+        return m + '分钟';
+    };
+
     const typeLabel = data.type === 'movie' ? '电影' : data.type === 'anime' ? '番剧' : '剧集';
 
     // 解析 metadata（genres / cast，由重新刮削写入）
@@ -160,6 +179,9 @@ function DetailContent() {
                                     </>
                                 )}
                                 {data.episodes && <><span className="text-text-4">·</span><span>共 {data.episodes.length} 集</span></>}
+                                {data.type === 'movie' && data.duration && data.duration > 0 && (
+                                    <><span className='text-text-4'>·</span><span>{formatDuration(data.duration)}</span></>
+                                )}
                                 {meta?.genres?.length > 0 && (
                                     <>
                                         <span className="text-text-4">·</span>
@@ -169,9 +191,19 @@ function DetailContent() {
                             </div>
 
                             {/* 简介：裸文字（去掉框中框），行首缩进呼吸感 */}
-                            <p className="mb-6 max-w-3xl text-[14px] leading-[1.9] text-text-2 line-clamp-2 md:text-[15px]">
-                                {data.overview || "暂无该影片的剧情简介。可在设置中配置 TMDB API 后触发扫描获取。"}
-                            </p>
+                            <div className='mb-6 max-w-3xl'>
+                                <p className={'text-[14px] leading-[1.9] text-text-2 md:text-[15px] ' + (showFullOverview ? '' : 'line-clamp-2')}>
+                                    {data.overview || "暂无该影片的剧情简介。可在设置中配置 TMDB API 后触发扫描获取。"}
+                                </p>
+                                {data.overview && data.overview.length > 80 && (
+                                    <button
+                                        onClick={() => setShowFullOverview(v => !v)}
+                                        className='mt-1 text-[12px] text-primary cursor-pointer hover:opacity-80'
+                                    >
+                                        {showFullOverview ? '收起' : '展开'}
+                                    </button>
+                                )}
+                            </div>
 
                             {/* 操作行：主按钮豪华化 + 次按钮弱化为文字钮 */}
                             <div className="mt-auto flex flex-wrap items-center justify-center gap-3 sm:justify-start">
@@ -311,23 +343,97 @@ function DetailContent() {
                 </section>
             )}
 
-            {/* 演职人员 / 类型（重新刮削写入 metadata 后展示） */}
-            {((meta?.cast?.length || 0) > 0 || (meta?.genres?.length || 0) > 0) && (
-                <section className="max-w-[1200px] mx-auto pt-2 pb-10">
-                    {meta?.genres?.length > 0 && (
-                        <div className="mb-4">
-                            <span className="text-[13px] text-text-3 mr-2">类型</span>
-                            {meta.genres.map((g: string) => (
-                                <span key={g} className="inline-block mr-2 mb-1 px-2.5 py-0.5 rounded border border-line/60 text-text-2 text-[12px]">{g}</span>
-                            ))}
-                        </div>
-                    )}
-                    {meta?.cast?.length > 0 && (
-                        <div>
-                            <span className="text-[13px] text-text-3 mr-2">主演</span>
-                            <span className="text-[13px] text-text-2">{meta.cast.join('、')}</span>
-                        </div>
-                    )}
+            {/* 演职员横滑（metadata 含 cast 才渲染；兼容旧字符串数组和新对象数组） */}
+            {(() => {
+                const castList = Array.isArray(meta?.cast) && meta.cast.length > 0 ? meta.cast : [];
+                if (castList.length === 0 && !meta?.director) return null;
+                // 规范化：字符串格式 → 对象格式
+                const persons: Array<{name: string; character: string; profile_path: string | null}> =
+                    castList.map((c: any) => typeof c === 'string' ? {name: c, character: '', profile_path: null} : c);
+                return (
+                    <section className='max-w-[1200px] mx-auto pt-2 pb-6'>
+                        {meta?.genres?.length > 0 && (
+                            <div className='mb-4'>
+                                <span className='text-[13px] text-text-3 mr-2'>类型</span>
+                                {meta.genres.map((g: string) => (
+                                    <span key={g} className='inline-block mr-2 mb-1 px-2.5 py-0.5 rounded border border-line/60 text-text-2 text-[12px]'>{g}</span>
+                                ))}
+                            </div>
+                        )}
+                        {(persons.length > 0 || meta?.director) && (
+                            <>
+                                <div className='flex items-center justify-between mb-4'>
+                                    <h2 className='font-display text-[20px] tracking-tight text-text-1 md:text-[22px]'>演职员</h2>
+                                </div>
+                                {meta?.director && (
+                                    <p className='mb-3 text-[13px] text-text-3'>导演：<span className='text-text-2'>{meta.director}</span></p>
+                                )}
+                                {persons.length > 0 && (
+                                    <div className='flex gap-4 overflow-x-auto pb-3' style={{scrollbarWidth: 'none'}}>
+                                        {persons.map((person, i) => (
+                                            <div key={i} className='flex-shrink-0 w-[88px] text-center'>
+                                                <div className='w-16 h-16 rounded-full mx-auto overflow-hidden bg-bg-input flex items-center justify-center mb-2'>
+                                                    {person.profile_path ? (
+                                                        /* eslint-disable-next-line @next/next/no-img-element */
+                                                        <img
+                                                            src={proxyImg(person.profile_path)}
+                                                            alt={person.name}
+                                                            className='w-full h-full object-cover'
+                                                            onError={(e) => {
+                                                                const el = e.target as HTMLImageElement;
+                                                                el.style.display = 'none';
+                                                                if (el.parentElement) el.parentElement.innerHTML = '<span style=\'font-size:22px;color:#888;\'>' + (person.name[0] || '?') + '</span>';
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <span style={{fontSize:'22px', color:'#888'}}>{person.name[0] || '?'}</span>
+                                                    )}
+                                                </div>
+                                                <p className='text-[12px] text-text-1 leading-tight line-clamp-2'>{person.name}</p>
+                                                {person.character && <p className='text-[11px] text-text-3 mt-0.5 line-clamp-1'>{person.character}</p>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </section>
+                );
+            })()}
+
+            {/* 相似内容横滑（同 type，至少 3 条才渲染） */}
+            {similarItems.length >= 3 && (
+                <section className='max-w-[1200px] mx-auto pt-2 pb-8'>
+                    <h2 className='font-display mb-5 text-[20px] tracking-tight text-text-1 md:text-[22px]'>相似内容</h2>
+                    <div className='flex gap-4 overflow-x-auto pb-3' style={{scrollbarWidth: 'none'}}>
+                        {similarItems.map((item: any) => {
+                            const href = '/detail?id=' + item.id;
+                            return (
+                                <a
+                                    key={item.id}
+                                    href={href}
+                                    className='flex-shrink-0 w-[130px] group cursor-pointer'
+                                >
+                                    <div className='aspect-[2/3] rounded-md overflow-hidden bg-bg-input mb-2 transition-transform duration-200 group-hover:-translate-y-1'>
+                                        {item.poster ? (
+                                            /* eslint-disable-next-line @next/next/no-img-element */
+                                            <img
+                                                src={proxyImg(item.poster)}
+                                                alt={item.title}
+                                                className='w-full h-full object-cover'
+                                                loading='lazy'
+                                                onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                                            />
+                                        ) : (
+                                            <div className='w-full h-full flex items-center justify-center text-text-4 text-[11px]'>无封面</div>
+                                        )}
+                                    </div>
+                                    <p className='text-[13px] text-text-1 line-clamp-2 group-hover:text-primary transition-colors'>{item.title}</p>
+                                    {item.year && <p className='text-[12px] text-text-3 mt-0.5'>{item.year}</p>}
+                                </a>
+                            );
+                        })}
+                    </div>
                 </section>
             )}
 
