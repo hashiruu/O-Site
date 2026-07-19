@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         const db = getDb();
         // 未登录不查任何观看进度（旧宽松版会把所有游客并到共享 'guest' 键上）
         const user = await resolveUserKeyOrNull(req);
-        const media = db.prepare(`SELECT id, title, type, path, poster, backdrop, overview, year, rating, duration, created_at, updated_at FROM media WHERE id = ?`).get(id) as any;
+        const media = db.prepare(`SELECT id, title, type, path, poster, backdrop, overview, year, rating, duration, metadata, created_at, updated_at FROM media WHERE id = ?`).get(id) as any;
 
         if (!media) {
             return NextResponse.json({ success: false, error: "Media not found in archive" }, { status: 404 });
